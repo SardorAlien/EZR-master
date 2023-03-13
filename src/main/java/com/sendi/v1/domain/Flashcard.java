@@ -19,4 +19,7 @@ public class Flashcard extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Deck deck;
+
+    @Column(name = "is_learned")
+    private String isLearned;
 }
