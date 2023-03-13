@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     private Set<Role> roles;
 
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "user")
-    private Set<Deck> deck;
+    private Set<Deck> decks;
 
     @Transient
     public Set<GrantedAuthority> getAuthorities() {
