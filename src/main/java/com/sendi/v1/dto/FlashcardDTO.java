@@ -14,5 +14,5 @@ public class FlashcardDTO {
     private String term;
     private String definition;
     private Deck deck;
-    private String isLearned;
+    private boolean isLearned;
 }

@@ -2,7 +2,10 @@ package com.sendi.v1.domain;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 @Getter
 @Setter
@@ -21,5 +24,6 @@ public class Flashcard extends BaseEntity {
     private Deck deck;
 
     @Column(name = "is_learned")
-    private String isLearned;
+    @Builder.Default
+    private boolean isLearned = false;
 }

@@ -1,6 +1,5 @@
 package com.sendi.v1.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendi.v1.security.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

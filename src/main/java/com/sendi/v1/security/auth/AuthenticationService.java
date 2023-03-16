@@ -1,10 +1,8 @@
 package com.sendi.v1.security.auth;
 
-import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.jwt.JwtService;
 import com.sendi.v1.security.repo.UserRepository;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @Slf4j
 @Service

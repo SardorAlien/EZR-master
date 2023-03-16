@@ -3,7 +3,8 @@ package com.sendi.v1.security.domain;
 import com.sendi.v1.domain.BaseEntity;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.util.Set;
 
 
