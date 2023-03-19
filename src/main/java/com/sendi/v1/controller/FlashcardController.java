@@ -15,19 +15,19 @@ import java.util.List;
 public class FlashcardController {
     private final FlashcardService flashcardService;
 
-    @GetMapping("/flashcards")
-    public ResponseEntity<List<FlashcardDTO>> getFlashcards(@RequestBody DeckDTO deckDTO) {
-        return ResponseEntity.ok(flashcardService.getFlashcardsByDeck(deckDTO));
+    @GetMapping("{deckId}/all")
+    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@PathVariable Long deckId) {
+        return ResponseEntity.ok(flashcardService.getFlashcardsByDeckId(deckId));
     }
 
-    @PostMapping("/new/{deckId}")
-    public ResponseEntity<FlashcardDTO> createFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
-        return ResponseEntity.ok(flashcardService.createOrUpdateDeck(flashcardDTO));
+    @PostMapping("{deckId}/new")
+    public ResponseEntity<FlashcardDTO> createFlashcard(@PathVariable Long deckId, @RequestBody FlashcardDTO flashcardDTO) {
+        return ResponseEntity.ok(flashcardService.createOrUpdateFlashcard(deckId, flashcardDTO));
     }
 
-    @PostMapping
-    public ResponseEntity<FlashcardDTO> updateFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
-        return ResponseEntity.ok(flashcardService.createOrUpdateDeck(flashcardDTO));
+    @PostMapping("/{deckId}/change")
+    public ResponseEntity<FlashcardDTO> updateFlashcard(@PathVariable Long deckId, @RequestBody FlashcardDTO flashcardDTO) {
+        return ResponseEntity.ok(flashcardService.createOrUpdateFlashcard(deckId, flashcardDTO));
     }
 
     @DeleteMapping("/{flashcardId}")

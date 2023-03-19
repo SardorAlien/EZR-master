@@ -9,5 +9,4 @@ import java.util.Optional;
 
 public interface DeckRepository extends CrudRepository<Deck, Long> {
     List<Deck> findAllByUser(User user);
-    Optional<Deck> findDeckById(Long id);
 }

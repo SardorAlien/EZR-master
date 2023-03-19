@@ -1,18 +1,15 @@
 package com.sendi.v1.dto;
 
-import com.sendi.v1.domain.Deck;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class FlashcardDTO {
+//    private Long id;
     private String term;
     private String definition;
-    private Deck deck;
     private boolean isLearned;
 }

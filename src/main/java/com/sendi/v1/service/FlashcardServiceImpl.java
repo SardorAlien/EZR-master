@@ -6,10 +6,12 @@ import com.sendi.v1.dto.DeckDTO;
 import com.sendi.v1.dto.FlashcardDTO;
 import com.sendi.v1.dto.mapper.DeckMapper;
 import com.sendi.v1.dto.mapper.FlashcardMapper;
+import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +23,7 @@ public class FlashcardServiceImpl implements FlashcardService {
     private final FlashcardRepository flashcardRepo;
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
-    private final DeckService deckService;
+    private final DeckRepository deckRepo;
 
     @Override
     public List<FlashcardDTO> getFlashcardsByDeck(DeckDTO deckDTO) {
@@ -41,18 +43,34 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId) {
-        if (deckId < 0) {
-            return Collections.emptyList();
+        Optional<Deck> deckOptional = deckRepo.findById(deckId);
+
+        if (deckOptional.isEmpty()) {
+            throw new RuntimeException("Invalid deckId");
         }
 
-        DeckDTO deckDTO = deckService.getDeckById(deckId);
+        Deck deck = deckOptional.get();
 
-        return getFlashcardsByDeck(deckDTO);
+        List<FlashcardDTO> flashcardDTOList = deck.getFlashcards()
+                .stream()
+                .map(flashcardMapper::flashcardToFlashcardDTO)
+                .collect(Collectors.toList());
+
+        return flashcardDTOList;
     }
 
     @Override
-    public FlashcardDTO createOrUpdateDeck(FlashcardDTO flashcardDTO) {
+    public FlashcardDTO createOrUpdateFlashcard(Long deckId, FlashcardDTO flashcardDTO) {
+        Optional<Deck> deckOptional = deckRepo.findById(deckId);
+
+        if (deckOptional.isEmpty()) {
+            throw new RuntimeException("Invalid deckId");
+        }
+
+        Deck deck = deckOptional.get();
+
         Flashcard flashcard = flashcardMapper.flashcardDTOToFlashcard(flashcardDTO);
+        flashcard.setDeck(deck);
 
         flashcardRepo.save(flashcard);
 
@@ -62,13 +80,8 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public void deleteById(Long flashcardId) {
-        flashcardRepo.deleteById(flashcardId);
-    }
-
-    @Override
     public FlashcardDTO getDeckById(Long flashcardId) {
-        Optional<Flashcard> flashcardOptional = flashcardRepo.getFlashcardById(flashcardId);
+        Optional<Flashcard> flashcardOptional = flashcardRepo.findById(flashcardId);
 
         if (flashcardOptional.isEmpty()) {
             return null;
@@ -79,5 +92,11 @@ public class FlashcardServiceImpl implements FlashcardService {
         FlashcardDTO newFlashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
 
         return newFlashcardDTO;
+    }
+
+    @Transactional
+    @Override
+    public void deleteById(Long flashcardId) {
+        flashcardRepo.deleteFlashcardById(flashcardId);
     }
 }

@@ -1,9 +1,6 @@
 package com.sendi.v1.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +13,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-//@EqualsAndHashCode
 public class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -15,29 +15,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeckController {
     private final DeckService deckService;
-    private final FlashcardService flashcardService;
-
-    @GetMapping("/flashcards")
-    public ResponseEntity<List<FlashcardDTO>> getFlashcards(@RequestBody Long deckId) {
-        return ResponseEntity.ok(flashcardService.getFlashcardsByDeckId(deckId));
-    }
 
     @GetMapping("/{userId}/all")
-    public ResponseEntity<List<DeckDTO>> getAllFlashcards(@PathVariable Long userId) {
+    public ResponseEntity<List<DeckDTO>> getAllDecks(@PathVariable Long userId) {
         return ResponseEntity.ok(deckService.getDecksByUserId(userId));
     }
 
-    @PostMapping("/new")
-    public ResponseEntity<DeckDTO> createDeck(@RequestBody DeckDTO deckDTO) {
-        return ResponseEntity.ok(deckService.createOrUpdateDeck(deckDTO));
+    @PostMapping("{userId}/new")
+    public ResponseEntity<DeckDTO> createDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
+        return ResponseEntity.ok(deckService.createOrUpdateDeck(userId, deckDTO));
     }
 
-    @PostMapping
-    public ResponseEntity<DeckDTO> updateDeck(@RequestBody DeckDTO deckDTO) {
-        return ResponseEntity.ok(deckService.createOrUpdateDeck(deckDTO));
+    @PostMapping("{userId}/change")
+    public ResponseEntity<DeckDTO> updateDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
+        return ResponseEntity.ok(deckService.createOrUpdateDeck(userId, deckDTO));
     }
 
-    @DeleteMapping("/{deckId}/delete")
+    @DeleteMapping("/{deckId}")
     public ResponseEntity<String> deleteDeck(@PathVariable Long deckId) {
         deckService.deleteById(deckId);
 

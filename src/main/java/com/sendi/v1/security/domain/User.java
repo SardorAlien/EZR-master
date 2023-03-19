@@ -32,7 +32,7 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Deck> decks;
 
     @Transient

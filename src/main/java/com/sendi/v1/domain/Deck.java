@@ -23,8 +23,8 @@ public class Deck extends BaseEntity {
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "deck")
-    private Set<Flashcard> flashcard;
+    private Set<Flashcard> flashcards;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 }

@@ -16,16 +16,14 @@ import java.util.List;
 @RequestMapping("/api/v1/learn")
 public class LearnController {
     private final LearnService learnService;
-    @GetMapping(name = "/new-learning-session", produces = "application/json")
+    @GetMapping(path = "/new-learning-session", produces = "application/json")
     public ResponseEntity<List<FlashcardDTO>> beginLearningSession(@RequestBody Long deckId) {
         return ResponseEntity.ok(learnService.beginLearningSession(deckId));
     }
 
-    @GetMapping(name = "/end-learning-session", produces = "application/json")
+    @GetMapping(path = "/end-learning-session", produces = "application/json")
     public ResponseEntity<String> finishLearningSession(@RequestBody List<FlashcardDTO> flashcardDTOs) {
         learnService.finishLearningSession(flashcardDTOs);
         return ResponseEntity.ok("Learning session ended");
     }
-    //
-    int a = 10;
 }

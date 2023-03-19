@@ -4,6 +4,7 @@ import com.sendi.v1.dto.FlashcardDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +24,9 @@ public class LearnServiceImpl implements LearnService {
 
     @Override
     public List<FlashcardDTO> finishLearningSession(List<FlashcardDTO> flashcardDTOs) {
-        List<FlashcardDTO> newFlashcardDTOs = flashcardDTOs.stream()
-                                                            .map(flashcardService::createOrUpdateDeck)
-                                                            .collect(Collectors.toList());
-        return newFlashcardDTOs;
+//        List<FlashcardDTO> newFlashcardDTOs = flashcardDTOs.stream()
+//                                                            .map(flashcardService::createOrUpdateFlashcard)
+//                                                            .collect(Collectors.toList());
+        return Collections.emptyList();
     }
 }

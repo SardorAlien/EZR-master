@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "flashcards")
+@Builder
 public class Flashcard extends BaseEntity {
 
     @Column(name = "term")
@@ -20,7 +21,7 @@ public class Flashcard extends BaseEntity {
     @Column(name = "definition")
     private String definition;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Deck deck;
 
     @Column(name = "is_learned")
