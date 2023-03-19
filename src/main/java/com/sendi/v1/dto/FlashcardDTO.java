@@ -2,6 +2,8 @@ package com.sendi.v1.dto;
 
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -12,4 +14,5 @@ public class FlashcardDTO {
     private String term;
     private String definition;
     private boolean isLearned;
+    private Timestamp createdAt;
 }

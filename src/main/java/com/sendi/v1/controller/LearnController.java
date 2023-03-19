@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/v1/learn")
 public class LearnController {
     private final LearnService learnService;
+    
     @GetMapping(path = "/new-learning-session", produces = "application/json")
     public ResponseEntity<List<FlashcardDTO>> beginLearningSession(@RequestBody Long deckId) {
         return ResponseEntity.ok(learnService.beginLearningSession(deckId));

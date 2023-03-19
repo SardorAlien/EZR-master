@@ -2,11 +2,9 @@ package com.sendi.v1.domain;
 
 import lombok.*;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @MappedSuperclass
 @NoArgsConstructor
@@ -17,4 +15,7 @@ public class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "created_at", updatable = false)
+    private Timestamp createdAt;
 }

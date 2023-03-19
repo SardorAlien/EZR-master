@@ -5,9 +5,11 @@ import com.sendi.v1.dto.FlashcardDTO;
 import com.sendi.v1.service.DeckService;
 import com.sendi.v1.service.FlashcardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -16,9 +18,18 @@ import java.util.List;
 public class DeckController {
     private final DeckService deckService;
 
-    @GetMapping("/{userId}/all")
+    @GetMapping(value = "/{userId}/all")
     public ResponseEntity<List<DeckDTO>> getAllDecks(@PathVariable Long userId) {
         return ResponseEntity.ok(deckService.getDecksByUserId(userId));
+    }
+
+    @GetMapping(value = "/{userId}/all", name = "getAllDecksWithPagination", params = {"page", "size"})
+    public ResponseEntity<List<DeckDTO>> getAllDecks(@PathParam("page") int page,
+                                                     @PathParam("size") int size,
+                                                     @PathVariable Long userId) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(deckService.getDecksByUserId(userId, pageRequest));
     }
 
     @PostMapping("{userId}/new")

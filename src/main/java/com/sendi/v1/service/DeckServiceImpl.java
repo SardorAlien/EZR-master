@@ -11,6 +11,8 @@ import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,15 +40,32 @@ public class DeckServiceImpl implements DeckService {
         List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user)
                 .stream()
                 .map(deckMapper::deckToDeckDTO)
-//                .map(deck -> deck.getFlashcards()
-//                        .stream()
-//                        .map(flashcardMapper::flashcardToFlashcardDTO)
-//                        .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         log.info("This is deckDTOList {}", deckDTOs);
 
         return deckDTOs;
+    }
+
+    @Override
+    public List<DeckDTO> getDecksByUser(User user, Pageable pageable) {
+        if (user == null) {
+            return Collections.emptyList();
+        }
+
+        List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user, pageable)
+                .stream()
+                .map(deckMapper::deckToDeckDTO)
+                .collect(Collectors.toList());
+
+        log.info("This is deckDTOList {}", deckDTOs);
+
+        return deckDTOs;
+    }
+
+    @Override
+    public List<DeckDTO> getDecksByUser(User user, int page, int size) {
+        return null;
     }
 
     @Override
@@ -60,6 +79,32 @@ public class DeckServiceImpl implements DeckService {
         User user = userOptional.get();
 
         return getDecksByUser(user);
+    }
+
+    @Override
+    public List<DeckDTO> getDecksByUserId(Long userId, Pageable pageable) {
+        Optional<User> userOptional = userRepo.getUserById(userId);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("Invalid userId");
+        }
+
+        User user = userOptional.get();
+
+        return getDecksByUser(user, pageable);
+    }
+
+    @Override
+    public List<DeckDTO> getDecksByUserId(Long userId, int page, int size) {
+        Optional<User> userOptional = userRepo.getUserById(userId);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("Invalid userId");
+        }
+
+        User user = userOptional.get();
+
+        return getDecksByUser(user, PageRequest.of(page, size));
     }
 
     @Override

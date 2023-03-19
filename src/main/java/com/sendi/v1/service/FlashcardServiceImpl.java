@@ -9,6 +9,8 @@ import com.sendi.v1.dto.mapper.FlashcardMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -51,7 +53,43 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         Deck deck = deckOptional.get();
 
-        List<FlashcardDTO> flashcardDTOList = deck.getFlashcards()
+        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck)
+                .stream()
+                .map(flashcardMapper::flashcardToFlashcardDTO)
+                .collect(Collectors.toList());
+
+        return flashcardDTOList;
+    }
+
+    @Override
+    public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, Pageable pageable) {
+        Optional<Deck> deckOptional = deckRepo.findById(deckId);
+
+        if (deckOptional.isEmpty()) {
+            throw new RuntimeException("Invalid deckId");
+        }
+
+        Deck deck = deckOptional.get();
+
+        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck, pageable)
+                .stream()
+                .map(flashcardMapper::flashcardToFlashcardDTO)
+                .collect(Collectors.toList());
+
+        return flashcardDTOList;
+    }
+
+    @Override
+    public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, int page, int size) {
+        Optional<Deck> deckOptional = deckRepo.findById(deckId);
+
+        if (deckOptional.isEmpty()) {
+            throw new RuntimeException("Invalid deckId");
+        }
+
+        Deck deck = deckOptional.get();
+
+        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck, PageRequest.of(page, size))
                 .stream()
                 .map(flashcardMapper::flashcardToFlashcardDTO)
                 .collect(Collectors.toList());

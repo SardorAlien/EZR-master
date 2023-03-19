@@ -4,6 +4,7 @@ import com.sendi.v1.domain.Deck;
 import com.sendi.v1.security.domain.Role;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Setter
@@ -19,4 +20,5 @@ public class UserDTO {
     private String lastname;
     private Set<Role> roles;
     private Set<Deck> decks;
+    private Timestamp createdAt;
 }

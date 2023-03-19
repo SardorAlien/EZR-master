@@ -2,6 +2,7 @@ package com.sendi.v1.dto;
 
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Setter
@@ -14,4 +15,5 @@ public class DeckDTO {
     private String name;
     private String description;
     private Set<FlashcardDTO> flashcardDTOs;
+    private Timestamp createdAt;
 }

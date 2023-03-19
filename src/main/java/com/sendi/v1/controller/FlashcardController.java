@@ -4,6 +4,7 @@ import com.sendi.v1.dto.DeckDTO;
 import com.sendi.v1.dto.FlashcardDTO;
 import com.sendi.v1.service.FlashcardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,15 @@ public class FlashcardController {
     @GetMapping("{deckId}/all")
     public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@PathVariable Long deckId) {
         return ResponseEntity.ok(flashcardService.getFlashcardsByDeckId(deckId));
+    }
+
+    @GetMapping(value = "{deckId}/all", params = {"page", "size"})
+    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@RequestParam int page,
+                                                               @RequestParam int size,
+                                                               @PathVariable Long deckId) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(flashcardService.getFlashcardsByDeckId(deckId, pageRequest));
     }
 
     @PostMapping("{deckId}/new")
