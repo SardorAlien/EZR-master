@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface FlashcardService {
-    FlashcardDTO getDeckById(Long flashcardId);
+    FlashcardDTO getOneById(Long flashcardId);
+
+//    FlashcardDTO getFlashcardById(Long flashcardId);
 
     List<FlashcardDTO> getFlashcardsByDeck(DeckDTO deck);
 

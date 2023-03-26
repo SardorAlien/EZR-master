@@ -16,4 +16,5 @@ public class DeckDTO {
     private String description;
     private Set<FlashcardDTO> flashcardDTOs;
     private Timestamp createdAt;
+    private Timestamp lastVisitedAt;
 }

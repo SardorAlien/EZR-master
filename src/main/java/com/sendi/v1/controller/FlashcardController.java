@@ -1,6 +1,5 @@
 package com.sendi.v1.controller;
 
-import com.sendi.v1.dto.DeckDTO;
 import com.sendi.v1.dto.FlashcardDTO;
 import com.sendi.v1.service.FlashcardService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +48,6 @@ public class FlashcardController {
 
     @GetMapping("/{flashcardId}")
     public ResponseEntity<FlashcardDTO> getFlashcard(@PathVariable Long flashcardId) {
-        return ResponseEntity.ok(flashcardService.getDeckById(flashcardId));
+        return ResponseEntity.ok(flashcardService.getOneById(flashcardId));
     }
 }

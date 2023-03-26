@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Getter
@@ -27,4 +28,7 @@ public class Deck extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
+
+    @Column(name = "lastVisitedAt")
+    private Timestamp lastVisitedAt;
 }

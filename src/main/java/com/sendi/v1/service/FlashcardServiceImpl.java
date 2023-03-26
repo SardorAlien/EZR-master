@@ -28,6 +28,21 @@ public class FlashcardServiceImpl implements FlashcardService {
     private final DeckRepository deckRepo;
 
     @Override
+    public FlashcardDTO getOneById(Long flashcardId) {
+        Optional<Flashcard> flashcardOptional = flashcardRepo.findById(flashcardId);
+
+        if (flashcardOptional.isEmpty()) {
+            return null;
+        }
+
+        Flashcard flashcard = flashcardOptional.get();
+
+        FlashcardDTO newFlashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
+
+        return newFlashcardDTO;
+    }
+
+    @Override
     public List<FlashcardDTO> getFlashcardsByDeck(DeckDTO deckDTO) {
         if (deckDTO == null) {
             return Collections.emptyList();
@@ -111,21 +126,6 @@ public class FlashcardServiceImpl implements FlashcardService {
         flashcard.setDeck(deck);
 
         flashcardRepo.save(flashcard);
-
-        FlashcardDTO newFlashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
-
-        return newFlashcardDTO;
-    }
-
-    @Override
-    public FlashcardDTO getDeckById(Long flashcardId) {
-        Optional<Flashcard> flashcardOptional = flashcardRepo.findById(flashcardId);
-
-        if (flashcardOptional.isEmpty()) {
-            return null;
-        }
-
-        Flashcard flashcard = flashcardOptional.get();
 
         FlashcardDTO newFlashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
 
