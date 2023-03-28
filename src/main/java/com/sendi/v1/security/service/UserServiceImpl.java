@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userOptional.get();
 
-        UserDTO newUserDTO = userMapper.userToUserDTO(user);
+        UserDTO newUserDTO = userMapper.toDTO(user);
 
         return newUserDTO;
     }

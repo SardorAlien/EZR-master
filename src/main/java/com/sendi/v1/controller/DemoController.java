@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/demo-controller")
 @RequiredArgsConstructor
-public class DemoController {
+public class
+DemoController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> sayHello() {

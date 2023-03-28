@@ -17,7 +17,7 @@ class DeckMapperTest {
         deck.setDescription("desc1");
 
         //when
-        DeckDTO deckDTO = deckMapper.deckToDeckDTO(deck);
+        DeckDTO deckDTO = deckMapper.toDTO(deck);
 
         //then
         assertEquals(deckDTO.getName(), deck.getName());
@@ -32,7 +32,7 @@ class DeckMapperTest {
         deckDTO.setDescription("desc1");
 
         //when
-        Deck deck = deckMapper.deckDTOToDeck(deckDTO);
+        Deck deck = deckMapper.toEntity(deckDTO);
 
         //then
         assertEquals(deck.getName(), deckDTO.getName());

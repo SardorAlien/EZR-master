@@ -1,9 +1,7 @@
 package com.sendi.v1.controller;
 
 import com.sendi.v1.dto.DeckDTO;
-import com.sendi.v1.dto.FlashcardDTO;
 import com.sendi.v1.service.DeckService;
-import com.sendi.v1.service.FlashcardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;

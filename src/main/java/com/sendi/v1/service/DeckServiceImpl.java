@@ -39,7 +39,7 @@ public class DeckServiceImpl implements DeckService {
 
         List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user)
                 .stream()
-                .map(deckMapper::deckToDeckDTO)
+                .map(deckMapper::toDTO)
                 .collect(Collectors.toList());
 
         log.info("This is deckDTOList {}", deckDTOs);
@@ -55,7 +55,7 @@ public class DeckServiceImpl implements DeckService {
 
         List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user, pageable)
                 .stream()
-                .map(deckMapper::deckToDeckDTO)
+                .map(deckMapper::toDTO)
                 .collect(Collectors.toList());
 
         log.info("This is deckDTOList {}", deckDTOs);
@@ -117,7 +117,7 @@ public class DeckServiceImpl implements DeckService {
 
         Deck deck = deckOptional.get();
 
-        DeckDTO newDeckDTO = deckMapper.deckToDeckDTO(deck);
+        DeckDTO newDeckDTO = deckMapper.toDTO(deck);
 
         return newDeckDTO;
     }
@@ -132,12 +132,12 @@ public class DeckServiceImpl implements DeckService {
 
         User user = userOptional.get();
 
-        Deck deck = deckMapper.deckDTOToDeck(deckDTO);
+        Deck deck = deckMapper.toEntity(deckDTO);
         deck.setUser(user);
 
         deckRepo.save(deck);
 
-        DeckDTO newDeckDTO = deckMapper.deckToDeckDTO(deck);
+        DeckDTO newDeckDTO = deckMapper.toDTO(deck);
 
         return newDeckDTO;
     }

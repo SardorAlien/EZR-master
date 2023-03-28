@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DeckRepository extends PagingAndSortingRepository<Deck, Long> {
     List<Deck> findAllByUser(User user);

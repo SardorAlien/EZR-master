@@ -23,7 +23,7 @@ class FlashcardMapperTest {
         flashcard.setDefinition("definition1");
 
         //when
-        FlashcardDTO flashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
+        FlashcardDTO flashcardDTO = flashcardMapper.toDTO(flashcard);
 
         //then
         assertEquals(flashcard.getTerm(), flashcardDTO.getTerm());
@@ -39,7 +39,7 @@ class FlashcardMapperTest {
         flashcardDTO.setDefinition("definition1");
 
         //when
-        Flashcard flashcard = flashcardMapper.flashcardDTOToFlashcard(flashcardDTO);
+        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
 
         //then
         assertEquals(flashcardDTO.getTerm(), flashcard.getTerm());

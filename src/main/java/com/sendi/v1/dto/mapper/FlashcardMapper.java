@@ -6,17 +6,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface FlashcardMapper {
     FlashcardMapper INSTANCE = Mappers.getMapper(FlashcardMapper.class);
 
-    FlashcardDTO flashcardToFlashcardDTO(Flashcard flashcard);
+    FlashcardDTO toDTO(Flashcard flashcard);
 
-    Flashcard flashcardDTOToFlashcard(FlashcardDTO flashcardDTO);
+    Flashcard toEntity(FlashcardDTO flashcardDTO);
 
-    Set<FlashcardDTO> flashcardsToFlashcardDTOs(Set<Flashcard> flashcards);
+    List<FlashcardDTO> toFlashcardDTOs(List<Flashcard> flashcards);
 
-    Set<Flashcard> flashcardDTOsToFlashcards(Set<FlashcardDTO> flashcardDTOs);
+    List<Flashcard> toFlashcards(List<FlashcardDTO> flashcardDTOs);
 }

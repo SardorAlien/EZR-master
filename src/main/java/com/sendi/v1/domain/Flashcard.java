@@ -7,15 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "flashcards")
-@Builder
+@EqualsAndHashCode(callSuper = true, exclude = "deck")
 public class Flashcard extends BaseEntity {
 
-    @Column(name = "term")
+    @Column(name = "term", nullable = false)
     private String term;
 
     @Column(name = "definition")

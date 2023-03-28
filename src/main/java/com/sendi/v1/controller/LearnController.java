@@ -14,14 +14,14 @@ import java.util.List;
 public class LearnController {
     private final LearnService learnService;
 
-    @PostMapping(path = "/{deckId}/learning-session", produces = "application/json")
+    @PostMapping(value = "/{deckId}/learning-session")
     public ResponseEntity<List<FlashcardDTO>> beginLearningSession(@PathVariable Long deckId) {
         return ResponseEntity.ok(learnService.beginLearningSession(deckId));
     }
 
-    @PostMapping(path = "/{deckId}/end-learning-session", produces = "application/json")
-    public ResponseEntity<String> finishLearningSession(@PathVariable Long deckId, @RequestBody List<Long> learnedFlashcardsId) {
-        learnService.finishLearningSession(deckId, learnedFlashcardsId);
+    @PostMapping(path = "/{deckId}/end-learning-session")
+    public ResponseEntity<String> finishLearningSession(@PathVariable Long deckId, @RequestBody List<Long> flashcardIds) {
+        learnService.finishLearningSession(deckId, flashcardIds);
 
         return ResponseEntity.ok("Learning session ended");
     }

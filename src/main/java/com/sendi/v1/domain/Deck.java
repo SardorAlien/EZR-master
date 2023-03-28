@@ -1,10 +1,9 @@
 package com.sendi.v1.domain;
 
 import com.sendi.v1.security.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,9 +14,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "decks")
+@EqualsAndHashCode(callSuper = true, exclude = "flashcards")
+@EntityListeners(AuditingEntityListener.class)
 public class Deck extends BaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -29,6 +30,7 @@ public class Deck extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
-    @Column(name = "lastVisitedAt")
+    @LastModifiedDate
+    @Column(name = "last_visited_at")
     private Timestamp lastVisitedAt;
 }

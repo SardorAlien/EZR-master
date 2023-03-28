@@ -37,7 +37,7 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         Flashcard flashcard = flashcardOptional.get();
 
-        FlashcardDTO newFlashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
+        FlashcardDTO newFlashcardDTO = flashcardMapper.toDTO(flashcard);
 
         return newFlashcardDTO;
     }
@@ -48,12 +48,12 @@ public class FlashcardServiceImpl implements FlashcardService {
             return Collections.emptyList();
         }
 
-        Deck deck = deckMapper.deckDTOToDeck(deckDTO);
+        Deck deck = deckMapper.toEntity(deckDTO);
 
         List<Flashcard> flashcards = flashcardRepo.findAllByDeck(deck);
 
         List<FlashcardDTO> flashcardDTOList =
-                flashcards.stream().map(flashcardMapper::flashcardToFlashcardDTO).collect(Collectors.toList());
+                flashcards.stream().map(flashcardMapper::toDTO).collect(Collectors.toList());
 
         return flashcardDTOList;
     }
@@ -70,7 +70,7 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck)
                 .stream()
-                .map(flashcardMapper::flashcardToFlashcardDTO)
+                .map(flashcardMapper::toDTO)
                 .collect(Collectors.toList());
 
         return flashcardDTOList;
@@ -88,7 +88,7 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck, pageable)
                 .stream()
-                .map(flashcardMapper::flashcardToFlashcardDTO)
+                .map(flashcardMapper::toDTO)
                 .collect(Collectors.toList());
 
         return flashcardDTOList;
@@ -106,7 +106,7 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck, PageRequest.of(page, size))
                 .stream()
-                .map(flashcardMapper::flashcardToFlashcardDTO)
+                .map(flashcardMapper::toDTO)
                 .collect(Collectors.toList());
 
         return flashcardDTOList;
@@ -122,12 +122,12 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         Deck deck = deckOptional.get();
 
-        Flashcard flashcard = flashcardMapper.flashcardDTOToFlashcard(flashcardDTO);
+        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
         flashcard.setDeck(deck);
 
         flashcardRepo.save(flashcard);
 
-        FlashcardDTO newFlashcardDTO = flashcardMapper.flashcardToFlashcardDTO(flashcard);
+        FlashcardDTO newFlashcardDTO = flashcardMapper.toDTO(flashcard);
 
         return newFlashcardDTO;
     }

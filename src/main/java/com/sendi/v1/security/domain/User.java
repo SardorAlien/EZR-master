@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode(callSuper = true, exclude = {"roles", "decks"})
 public class User extends BaseEntity implements UserDetails, CredentialsContainer {
     private String username;
     private String email;

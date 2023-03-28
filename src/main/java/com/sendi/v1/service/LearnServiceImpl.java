@@ -1,12 +1,16 @@
 package com.sendi.v1.service;
 
+import com.sendi.v1.domain.Deck;
+import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.dto.FlashcardDTO;
+import com.sendi.v1.dto.mapper.FlashcardMapper;
+import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -14,6 +18,8 @@ import java.util.stream.Collectors;
 public class LearnServiceImpl implements LearnService {
     private final FlashcardService flashcardService;
     private final FlashcardRepository flashcardRepo;
+    private final FlashcardMapper flashcardMapper;
+    private final DeckRepository deckRepo;
 
     @Override
     public List<FlashcardDTO> beginLearningSession(Long deckId) {
@@ -23,12 +29,6 @@ public class LearnServiceImpl implements LearnService {
 
         return getNotLearnedFlashcards(deckId);
     }
-
-    @Override
-    public void finishLearningSession(List<FlashcardDTO> flashcardDTOs) {
-
-    }
-
     private List<FlashcardDTO> getAllFlashcards(Long deckId) {
         List<FlashcardDTO> flashcardDTOs = flashcardService.getFlashcardsByDeckId(deckId);
 
@@ -45,25 +45,26 @@ public class LearnServiceImpl implements LearnService {
     }
 
     private boolean isDeckFinished(Long deckId) {
-        if (getNotLearnedFlashcards(deckId).size() > 0) {
-            return false;
-        }
-
-        return true;
+        return getNotLearnedFlashcards(deckId).size() == 0;
     }
 
     @Override
-    public void finishLearningSession(Long deckId, List<Long> learnedFlashcardsId) {
+    public void finishLearningSession(Long deckId, List<Long> flashcardIds) {
+        Optional<Deck> optionalDeck = deckRepo.findById(deckId);
 
-        flashcardRepo.updateLearnedStateOfFlashcardsByDeckId(deckId, learnedFlashcardsId, true);
-    }
+        if (optionalDeck.isEmpty()) return;
 
-//    @Override
-//    public List<FlashcardDTO> finishLearningSession(List<FlashcardDTO> flashcardDTOs) {
-//
-//        List<FlashcardDTO> newFlashcardDTOs = flashcardDTOs.stream()
-//                                                            .map(flashcardService::createOrUpdateFlashcard)
-//                                                            .collect(Collectors.toList());
-//        return Collections.emptyList();
-//    }
+        Deck deck = optionalDeck.get();
+
+        List<Flashcard> flashcards = flashcardRepo
+                .findAllByDeck(deck);
+
+        flashcards
+                .stream()
+                .filter(flashcard -> flashcardIds.contains(flashcard.getId()))
+                .forEach(flashcard -> {
+                    flashcard.setLearned(true);
+                    flashcardRepo.save(flashcard);
+                });
+        }
 }
