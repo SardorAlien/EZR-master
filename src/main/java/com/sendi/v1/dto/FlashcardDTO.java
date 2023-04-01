@@ -3,7 +3,7 @@ package com.sendi.v1.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -16,5 +16,5 @@ public class FlashcardDTO {
     private String term;
     private String definition;
     private boolean isLearned;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 }

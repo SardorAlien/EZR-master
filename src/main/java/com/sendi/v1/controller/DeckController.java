@@ -30,14 +30,14 @@ public class DeckController {
         return ResponseEntity.ok(deckService.getDecksByUserId(userId, pageRequest));
     }
 
-    @PostMapping("{userId}/new")
+    @PostMapping("/{userId}/new")
     public ResponseEntity<DeckDTO> createDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
-        return ResponseEntity.ok(deckService.createOrUpdateDeck(userId, deckDTO));
+        return ResponseEntity.ok(deckService.createOrUpdate(userId, deckDTO));
     }
 
-    @PostMapping("{userId}/change")
+    @PutMapping("/{userId}/edit")
     public ResponseEntity<DeckDTO> updateDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
-        return ResponseEntity.ok(deckService.createOrUpdateDeck(userId, deckDTO));
+        return ResponseEntity.ok(deckService.createOrUpdate(userId, deckDTO));
     }
 
     @DeleteMapping("/{deckId}")
@@ -49,6 +49,6 @@ public class DeckController {
 
     @GetMapping("/{deckId}")
     public ResponseEntity<DeckDTO> getDeck(@PathVariable Long deckId) {
-        return ResponseEntity.ok(deckService.getDeckById(deckId));
+        return ResponseEntity.ok(deckService.getOneById(deckId));
     }
 }

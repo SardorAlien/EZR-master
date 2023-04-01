@@ -8,7 +8,10 @@ import com.sendi.v1.dto.mapper.DeckMapper;
 import com.sendi.v1.dto.mapper.FlashcardMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
+import com.sendi.v1.security.domain.User;
+import com.sendi.v1.security.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,18 +24,20 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FlashcardServiceImpl implements FlashcardService {
     private final FlashcardRepository flashcardRepo;
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
+    private final DeckService deckService;
 
     @Override
     public FlashcardDTO getOneById(Long flashcardId) {
         Optional<Flashcard> flashcardOptional = flashcardRepo.findById(flashcardId);
 
         if (flashcardOptional.isEmpty()) {
-            return null;
+            throw new RuntimeException("Invalid flashcardId");
         }
 
         Flashcard flashcard = flashcardOptional.get();
@@ -113,7 +118,11 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public FlashcardDTO createOrUpdateFlashcard(Long deckId, FlashcardDTO flashcardDTO) {
+    @Transactional
+    public FlashcardDTO createOrUpdate(Long deckId, FlashcardDTO flashcardDTO) {
+
+        log.info("createOrUpdate | This is flashcardDTO => {}", flashcardDTO);
+
         Optional<Deck> deckOptional = deckRepo.findById(deckId);
 
         if (deckOptional.isEmpty()) {
@@ -124,6 +133,8 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
         flashcard.setDeck(deck);
+
+        log.info("createOrUpdate | This is flashcard => {}", flashcard);
 
         flashcardRepo.save(flashcard);
 

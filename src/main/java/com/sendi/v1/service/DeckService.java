@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface DeckService {
-    DeckDTO getDeckById(Long id);
+    DeckDTO getOneById(Long id);
 
     List<DeckDTO> getDecksByUser(User user);
 
@@ -21,7 +21,7 @@ public interface DeckService {
 
     List<DeckDTO> getDecksByUserId(Long userId, int page, int size);
 
-    DeckDTO createOrUpdateDeck(Long userId, DeckDTO deckDTO);
+    DeckDTO createOrUpdate(Long userId, DeckDTO deckDTO);
 
     void deleteById(Long deckId);
 

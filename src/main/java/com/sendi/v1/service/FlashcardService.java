@@ -19,7 +19,7 @@ public interface FlashcardService {
 
     List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, int page, int size);
 
-    FlashcardDTO createOrUpdateFlashcard(Long deckId, FlashcardDTO flashcardDTO);
+    FlashcardDTO createOrUpdate(Long deckId, FlashcardDTO flashcardDTO);
 
     void deleteById(Long flashcardId);
 }

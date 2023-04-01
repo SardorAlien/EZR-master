@@ -3,18 +3,16 @@ package com.sendi.v1.service;
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.dto.DeckDTO;
 import com.sendi.v1.dto.mapper.DeckMapper;
-import com.sendi.v1.dto.mapper.FlashcardMapper;
-import com.sendi.v1.dto.mapper.UserMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
-import com.sendi.v1.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +24,6 @@ import java.util.stream.Collectors;
 public class DeckServiceImpl implements DeckService {
     private final DeckRepository deckRepo;
     private final DeckMapper deckMapper;
-    private final FlashcardMapper flashcardMapper;
-    private final UserService userService;
-    private final UserMapper userMapper;
     private final UserRepository userRepo;
 
     @Override
@@ -108,11 +103,11 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
-    public DeckDTO getDeckById(Long id) {
+    public DeckDTO getOneById(Long id) {
         Optional<Deck> deckOptional = deckRepo.findById(id);
 
         if (deckOptional.isEmpty()) {
-            return null;
+            throw new RuntimeException("Invalid deckId");
         }
 
         Deck deck = deckOptional.get();
@@ -123,7 +118,11 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
-    public DeckDTO createOrUpdateDeck(Long userId, DeckDTO deckDTO) {
+    @Transactional
+    public DeckDTO createOrUpdate(Long userId, DeckDTO deckDTO) {
+
+        log.info("createOrUpdate | This is deckDTO => {}", deckDTO);
+
         Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
@@ -134,6 +133,8 @@ public class DeckServiceImpl implements DeckService {
 
         Deck deck = deckMapper.toEntity(deckDTO);
         deck.setUser(user);
+
+        log.info("createOrUpdate | This is deck => {}", deck);
 
         deckRepo.save(deck);
 

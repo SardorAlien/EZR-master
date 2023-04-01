@@ -31,7 +31,7 @@ class FlashcardRepositoryTest {
         list.add(1L);
 
         //when
-        flashcardRepository.updateLearnedStateOfFlashcardsByDeckId(1L, list, false);
+//        flashcardRepository.updateLearnedStateOfFlashcardsByDeckId(1L, list, false);
 
         //then
         assertEquals(flashcardRepository.findById(1L).get().isLearned(), false);

@@ -3,7 +3,7 @@ package com.sendi.v1.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Setter
@@ -17,6 +17,6 @@ public class DeckDTO {
     private String name;
     private String description;
     private Set<FlashcardDTO> flashcardDTOs;
-    private Timestamp createdAt;
-    private Timestamp lastVisitedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime lastVisitedAt;
 }

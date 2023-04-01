@@ -3,22 +3,24 @@ package com.sendi.v1.security.domain;
 import com.sendi.v1.domain.BaseEntity;
 import com.sendi.v1.domain.Deck;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity(name = "users")
+
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
-@EqualsAndHashCode(callSuper = true, exclude = {"roles", "decks"})
+@Entity(name = "users")
 public class User extends BaseEntity implements UserDetails, CredentialsContainer {
     private String username;
     private String email;
@@ -33,7 +35,7 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Deck> decks;
 
     @Transient
@@ -80,5 +82,18 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     @Override
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return getId() != null && Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

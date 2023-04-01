@@ -1,11 +1,13 @@
 package com.sendi.v1.domain;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -13,7 +15,6 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "flashcards")
-@EqualsAndHashCode(callSuper = true, exclude = "deck")
 public class Flashcard extends BaseEntity {
 
     @Column(name = "term", nullable = false)
@@ -28,4 +29,17 @@ public class Flashcard extends BaseEntity {
     @Column(name = "is_learned")
     @Builder.Default
     private boolean isLearned = false;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Flashcard flashcard = (Flashcard) o;
+        return getId() != null && Objects.equals(getId(), flashcard.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

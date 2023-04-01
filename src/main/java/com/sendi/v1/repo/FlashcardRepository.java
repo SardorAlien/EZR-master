@@ -15,9 +15,9 @@ public interface FlashcardRepository extends PagingAndSortingRepository<Flashcar
     List<Flashcard> findAllByDeck(Deck deck, Pageable pageable);
     void deleteFlashcardById(Long flashcardId);
 
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query(value = "UPDATE flashcards f SET f.isLearned = :isLearned WHERE f.id in :flashcardIds AND f.deck.id = :deckId")
-    void updateLearnedStateOfFlashcardsByDeckId(@Param("deckId") Long deckId,
-                                                @Param("flashcardIds") List<Long> flashcardIds,
-                                                @Param("isLearned") boolean isLearned);
+//    @Modifying(flushAutomatically = true, clearAutomatically = true)
+//    @Query(value = "UPDATE flashcards f SET f.isLearned = :isLearned WHERE f.id in :flashcardIds AND f.deck.id = :deckId")
+//    void updateLearnedStateOfFlashcardsByDeckId(@Param("deckId") Long deckId,
+//                                                @Param("flashcardIds") List<Long> flashcardIds,
+//                                                @Param("isLearned") boolean isLearned);
 }
