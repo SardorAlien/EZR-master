@@ -30,7 +30,6 @@ public class FlashcardServiceImpl implements FlashcardService {
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
-    private final DeckService deckService;
 
     @Override
     public FlashcardDTO getOneById(Long flashcardId) {

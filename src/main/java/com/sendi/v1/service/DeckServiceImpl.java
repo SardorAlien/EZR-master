@@ -65,7 +65,7 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public List<DeckDTO> getDecksByUserId(Long userId) {
-        Optional<User> userOptional = userRepo.getUserById(userId);
+        Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Invalid userId");
@@ -78,7 +78,7 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public List<DeckDTO> getDecksByUserId(Long userId, Pageable pageable) {
-        Optional<User> userOptional = userRepo.getUserById(userId);
+        Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Invalid userId");
@@ -91,7 +91,7 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public List<DeckDTO> getDecksByUserId(Long userId, int page, int size) {
-        Optional<User> userOptional = userRepo.getUserById(userId);
+        Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Invalid userId");

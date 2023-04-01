@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        Optional<User> userOptional = userRepository.getUserById(id);
+        Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isEmpty()) {
             return null;
