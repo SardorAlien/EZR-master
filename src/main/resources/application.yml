@@ -11,7 +11,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        query:
+          in_caluse_parameter_padding: true
+#        generate_statistics: true ## When you want to check the performance
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 #  jackson:
 #    default-property-inclusion: non_null

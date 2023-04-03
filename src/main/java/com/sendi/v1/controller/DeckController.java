@@ -11,43 +11,43 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/deck")
+@RequestMapping("api/v1/decks")
 @RequiredArgsConstructor
 public class DeckController {
     private final DeckService deckService;
 
-    @GetMapping(value = "/{userId}/all")
+    @GetMapping(value = "{userId}/all")
     public ResponseEntity<List<DeckDTO>> getAllDecks(@PathVariable Long userId) {
         return ResponseEntity.ok(deckService.getDecksByUserId(userId));
     }
 
-    @GetMapping(value = "/{userId}/all", name = "getAllDecksWithPagination", params = {"page", "size"})
-    public ResponseEntity<List<DeckDTO>> getAllDecks(@PathParam("page") int page,
-                                                     @PathParam("size") int size,
+    @GetMapping(value = "{userId}/all", name = "getAllDecksWithPagination", params = {"page", "size"})
+    public ResponseEntity<List<DeckDTO>> getAllDecks(@RequestParam("page") int page,
+                                                     @RequestParam("size") int size,
                                                      @PathVariable Long userId) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         return ResponseEntity.ok(deckService.getDecksByUserId(userId, pageRequest));
     }
 
-    @PostMapping("/{userId}/new")
+    @PostMapping("{userId}")
     public ResponseEntity<DeckDTO> createDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
         return ResponseEntity.ok(deckService.createOrUpdate(userId, deckDTO));
     }
 
-    @PutMapping("/{userId}/edit")
+    @PutMapping("{userId}")
     public ResponseEntity<DeckDTO> updateDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
         return ResponseEntity.ok(deckService.createOrUpdate(userId, deckDTO));
     }
 
-    @DeleteMapping("/{deckId}")
+    @DeleteMapping("{deckId}")
     public ResponseEntity<String> deleteDeck(@PathVariable Long deckId) {
         deckService.deleteById(deckId);
 
         return ResponseEntity.ok("Deleted successfully");
     }
 
-    @GetMapping("/{deckId}")
+    @GetMapping("{deckId}")
     public ResponseEntity<DeckDTO> getDeck(@PathVariable Long deckId) {
         return ResponseEntity.ok(deckService.getOneById(deckId));
     }

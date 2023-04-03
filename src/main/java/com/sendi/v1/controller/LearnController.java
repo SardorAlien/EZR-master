@@ -10,16 +10,16 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/learn")
+@RequestMapping("api/v1/learn")
 public class LearnController {
     private final LearnService learnService;
 
-    @PostMapping(value = "/{deckId}/learning-session")
+    @PostMapping(value = "{deckId}/session")
     public ResponseEntity<List<FlashcardDTO>> beginLearningSession(@PathVariable Long deckId) {
         return ResponseEntity.ok(learnService.beginLearningSession(deckId));
     }
 
-    @PostMapping(path = "/{deckId}/end-learning-session")
+    @PostMapping(path = "{deckId}/end")
     public ResponseEntity<String> finishLearningSession(@PathVariable Long deckId, @RequestBody List<Long> flashcardIds) {
         learnService.finishLearningSession(deckId, flashcardIds);
 

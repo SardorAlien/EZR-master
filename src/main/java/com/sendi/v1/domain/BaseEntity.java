@@ -2,6 +2,7 @@ package com.sendi.v1.domain;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,8 +21,9 @@ import java.util.Objects;
 public class BaseEntity implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_seq")
+    @SequenceGenerator(name = "base_seq", sequenceName = "base_sequence")
     private Long id;
 
     @CreatedDate
