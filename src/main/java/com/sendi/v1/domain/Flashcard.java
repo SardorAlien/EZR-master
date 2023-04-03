@@ -3,17 +3,14 @@ package com.sendi.v1.domain;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Objects;
 
-@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Entity(name = "flashcards")
 public class Flashcard extends BaseEntity {
 
@@ -24,11 +21,11 @@ public class Flashcard extends BaseEntity {
     private String definition;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Deck deck;
 
     @Column(name = "is_learned")
-    @Builder.Default
-    private boolean isLearned = false;
+    private Boolean isLearned = false;
 
     @Override
     public boolean equals(Object o) {

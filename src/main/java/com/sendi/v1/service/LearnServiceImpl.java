@@ -63,7 +63,7 @@ public class LearnServiceImpl implements LearnService {
                 .stream()
                 .filter(flashcard -> flashcardIds.contains(flashcard.getId()))
                 .forEach(flashcard -> {
-                    flashcard.setLearned(true);
+                    flashcard.setIsLearned(true);
                     flashcardRepo.save(flashcard);
                 });
         }

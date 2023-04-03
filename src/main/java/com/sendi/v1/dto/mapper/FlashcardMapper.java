@@ -5,7 +5,7 @@ import com.sendi.v1.dto.FlashcardDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface FlashcardMapper {
@@ -15,7 +15,7 @@ public interface FlashcardMapper {
 
     Flashcard toEntity(FlashcardDTO flashcardDTO);
 
-    List<FlashcardDTO> toFlashcardDTOs(List<Flashcard> flashcards);
+    Set<FlashcardDTO> toFlashcardDTOs(Set<Flashcard> flashcards);
 
-    List<Flashcard> toFlashcards(List<FlashcardDTO> flashcardDTOs);
+    Set<Flashcard> toFlashcards(Set<FlashcardDTO> flashcardDTOs);
 }

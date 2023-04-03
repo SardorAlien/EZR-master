@@ -30,6 +30,7 @@ public class FlashcardServiceImpl implements FlashcardService {
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
+    private final DeckService deckService;
 
     @Override
     public FlashcardDTO getOneById(Long flashcardId) {
@@ -119,9 +120,6 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Override
     @Transactional
     public FlashcardDTO createOrUpdate(Long deckId, FlashcardDTO flashcardDTO) {
-
-        log.info("createOrUpdate | This is flashcardDTO => {}", flashcardDTO);
-
         Optional<Deck> deckOptional = deckRepo.findById(deckId);
 
         if (deckOptional.isEmpty()) {
@@ -132,8 +130,6 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
         flashcard.setDeck(deck);
-
-        log.info("createOrUpdate | This is flashcard => {}", flashcard);
 
         flashcardRepo.save(flashcard);
 

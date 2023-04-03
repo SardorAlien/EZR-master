@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Entity(name = "users")
+@ToString
 public class User extends BaseEntity implements UserDetails, CredentialsContainer {
     private String username;
     private String email;
@@ -36,6 +38,7 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     private Set<Role> roles;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @ToString.Exclude
     private Set<Deck> decks;
 
     @Transient

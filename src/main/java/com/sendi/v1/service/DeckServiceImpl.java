@@ -2,10 +2,13 @@ package com.sendi.v1.service;
 
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.dto.DeckDTO;
+import com.sendi.v1.dto.UserDTO;
 import com.sendi.v1.dto.mapper.DeckMapper;
+import com.sendi.v1.dto.mapper.UserMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
+import com.sendi.v1.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +28,8 @@ public class DeckServiceImpl implements DeckService {
     private final DeckRepository deckRepo;
     private final DeckMapper deckMapper;
     private final UserRepository userRepo;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Override
     public List<DeckDTO> getDecksByUser(User user) {
@@ -120,9 +125,6 @@ public class DeckServiceImpl implements DeckService {
     @Override
     @Transactional
     public DeckDTO createOrUpdate(Long userId, DeckDTO deckDTO) {
-
-        log.info("createOrUpdate | This is deckDTO => {}", deckDTO);
-
         Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
@@ -133,8 +135,6 @@ public class DeckServiceImpl implements DeckService {
 
         Deck deck = deckMapper.toEntity(deckDTO);
         deck.setUser(user);
-
-        log.info("createOrUpdate | This is deck => {}", deck);
 
         deckRepo.save(deck);
 
