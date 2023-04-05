@@ -1,5 +1,6 @@
 package com.sendi.v1.security.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sendi.v1.domain.BaseEntity;
 import com.sendi.v1.domain.Deck;
 import lombok.*;
@@ -31,14 +32,17 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     private String lastname;
 
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @ToString.Exclude
+    @JsonManagedReference
     private Set<Role> roles;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonManagedReference
     private Set<Deck> decks;
 
     @Transient
@@ -51,15 +55,19 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     }
 
     @Builder.Default
+    @Column(name = "account_non_expired")
     private Boolean accountNonExpired = true;
 
     @Builder.Default
+    @Column(name = "account_non_locked")
     private Boolean accountNonLocked = true;
 
     @Builder.Default
+    @Column(name = "credentials_non_expired")
     private Boolean credentialsNonExpired = true;
 
     @Builder.Default
+    @Column(name = "enabled")
     private Boolean enabled = true;
 
     @Override
@@ -89,14 +97,11 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return getId() != null && Objects.equals(getId(), user.getId());
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return super.hashCode();
     }
 }

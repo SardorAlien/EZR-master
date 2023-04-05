@@ -1,6 +1,7 @@
 package com.sendi.v1.security;
 
 import com.sendi.v1.security.jwt.JwtAuthenticationFilter;
+import com.sendi.v1.security.service.JpaUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,9 @@ public class SecurityConfig {
         httpSecurity.csrf().disable()
                 .authorizeRequests(authorize-> {
                     authorize
-                            .antMatchers("/api/v1/auth/**").permitAll()
+                            .antMatchers("api/v1/auth/**").permitAll()
+//                            .antMatchers("/api/v1/customers/**").hasRole("ADMIN")
+                            .antMatchers("api/v1/flashcards/**").hasRole("USER")
                             .anyRequest().authenticated();
                 })
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

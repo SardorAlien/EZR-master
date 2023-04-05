@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -63,10 +64,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<UserDTO> getUsers() {
         log.info("all users are being fetched");
 
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+
+//        log.info("users => {}", users);
+
+        List<UserDTO> userDTOList = userMapper.toUserDTOs(users);
+//        log.info("userDTOList => {}", userDTOList);
+
+        return userDTOList;
     }
 
     @Override

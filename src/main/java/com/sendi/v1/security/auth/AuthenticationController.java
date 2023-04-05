@@ -1,5 +1,6 @@
 package com.sendi.v1.security.auth;
 
+import com.sendi.v1.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) {
 
         log.info("Request coming in");
@@ -28,12 +29,12 @@ public class AuthenticationController {
     }
 
 
-    @PostMapping("/authenticate")
+    @PostMapping("authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
 
-    @PostMapping("/refreshToken") //todo create a method to refresh token
+    @PostMapping("refreshToken") //todo create a method to refresh token
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         authenticationService.refreshToken(request, response);
     }

@@ -2,6 +2,7 @@ package com.sendi.v1.controller;
 
 import com.sendi.v1.dto.DeckDTO;
 import com.sendi.v1.service.DeckService;
+import com.sendi.v1.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeckController {
     private final DeckService deckService;
+    private final TestService testService;
 
     @GetMapping(value = "{userId}/all")
     public ResponseEntity<List<DeckDTO>> getAllDecks(@PathVariable Long userId) {
@@ -50,5 +52,11 @@ public class DeckController {
     @GetMapping("{deckId}")
     public ResponseEntity<DeckDTO> getDeck(@PathVariable Long deckId) {
         return ResponseEntity.ok(deckService.getOneById(deckId));
+    }
+
+    @PostMapping(value = "{deckId}", params = {"count"})
+    public ResponseEntity<?> beginTest(@PathVariable Long deckId, @RequestParam Integer count) {
+//        testService.beginTest(deckId, count)
+        return ResponseEntity.ok("not implemented");
     }
 }

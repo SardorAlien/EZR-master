@@ -1,5 +1,6 @@
 package com.sendi.v1.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -22,6 +23,7 @@ public class Flashcard extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonBackReference
     private Deck deck;
 
     @Column(name = "is_learned")
@@ -29,14 +31,11 @@ public class Flashcard extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Flashcard flashcard = (Flashcard) o;
-        return getId() != null && Objects.equals(getId(), flashcard.getId());
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return super.hashCode();
     }
 }

@@ -1,5 +1,7 @@
 package com.sendi.v1.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sendi.v1.security.domain.User;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -30,10 +32,12 @@ public class Deck extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "deck", fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonManagedReference
     private Set<Flashcard> flashcards;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonBackReference
     private User user;
 
     @LastModifiedDate
@@ -42,15 +46,11 @@ public class Deck extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
-            return false;
-        Deck deck = (Deck) o;
-        return getId() != null && Objects.equals(getId(), deck.getId());
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return super.hashCode();
     }
 }

@@ -1,6 +1,7 @@
 package com.sendi.v1.security.jwt;
 
-import com.sendi.v1.security.JpaUserDetailsService;
+import com.sendi.v1.security.service.JpaUserDetailsService;
+import com.sendi.v1.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
