@@ -1,0 +1,55 @@
+-- drop table if exists users;
+-- drop table if exists roles;
+-- drop table if exists user_role;
+-- drop table if exists authorities;
+-- drop table if exists role_authority;
+--
+-- create table if not exists users
+-- (
+--     id                      bigint not null
+--         primary key,
+--     account_non_expired     boolean,
+--     account_non_locked      boolean,
+--     credentials_non_expired boolean,
+--     email                   varchar(255),
+--     enabled                 boolean,
+--     firstname               varchar(255),
+--     lastname                varchar(255),
+--     password                varchar(255),
+--     username                varchar(255)
+-- );
+-- create table if not exists roles
+-- (
+--     id   bigint not null
+--         primary key,
+--     name varchar(255)
+-- );
+--
+-- create table if not exists user_role
+-- (
+--     user_id bigint not null
+--         constraint fkj345gk1bovqvfame88rcx7yyx
+--             references users,
+--     role_id bigint not null
+--         constraint fkt7e7djp752sqn6w22i6ocqy6q
+--             references roles,
+--     primary key (user_id, role_id)
+-- );
+--
+-- create table if not exists authorities
+-- (
+--     id         bigint not null
+--         primary key,
+--     permission varchar(255)
+-- );
+--
+-- create table if not exists role_authority
+-- (
+--     role_id      bigint not null
+--         constraint fk78r7yh1uqg30liv2n75ay99j
+--             references roles,
+--     authority_id bigint not null
+--         constraint fkpduid6tx7e38l03s86446514r
+--             references authorities,
+--     primary key (role_id, authority_id)
+-- );

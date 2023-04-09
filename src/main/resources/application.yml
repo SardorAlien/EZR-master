@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ezr
+    username: postgres
+    password: 5938240s
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        query:
+          in_clause_parameter_padding: true
+#        generate_statistics: true ## When you want to check the performance
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+#  jackson:
+#    default-property-inclusion: non_null
