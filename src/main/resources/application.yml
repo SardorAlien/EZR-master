@@ -10,12 +10,14 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        globally_quoted_identifiers: true
         format_sql: true
         query:
           in_clause_parameter_padding: true
 #        generate_statistics: true ## When you want to check the performance
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
 #  jackson:
+server:
+  port: 8081
 #    default-property-inclusion: non_null

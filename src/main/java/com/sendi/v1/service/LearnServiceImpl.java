@@ -2,8 +2,8 @@ package com.sendi.v1.service;
 
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Flashcard;
-import com.sendi.v1.dto.FlashcardDTO;
-import com.sendi.v1.dto.mapper.FlashcardMapper;
+import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.dto.mapper.FlashcardMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;

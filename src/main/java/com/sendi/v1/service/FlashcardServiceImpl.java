@@ -2,14 +2,12 @@ package com.sendi.v1.service;
 
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Flashcard;
-import com.sendi.v1.dto.DeckDTO;
-import com.sendi.v1.dto.FlashcardDTO;
-import com.sendi.v1.dto.mapper.DeckMapper;
-import com.sendi.v1.dto.mapper.FlashcardMapper;
+import com.sendi.v1.service.dto.DeckDTO;
+import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.dto.mapper.DeckMapper;
+import com.sendi.v1.service.dto.mapper.FlashcardMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
-import com.sendi.v1.security.domain.User;
-import com.sendi.v1.security.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

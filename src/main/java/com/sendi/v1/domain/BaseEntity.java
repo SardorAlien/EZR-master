@@ -22,8 +22,9 @@ public class BaseEntity implements Serializable {
 
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_seq")
-    @SequenceGenerator(name = "base_seq", sequenceName = "base_sequence", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_seq")
+//    @SequenceGenerator(name = "base_seq", sequenceName = "base_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @CreatedDate

@@ -1,7 +1,7 @@
-package com.sendi.v1.dto.mapper;
+package com.sendi.v1.service.dto.mapper;
 
 import com.sendi.v1.domain.Deck;
-import com.sendi.v1.dto.DeckDTO;
+import com.sendi.v1.service.dto.DeckDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

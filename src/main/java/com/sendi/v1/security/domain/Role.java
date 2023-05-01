@@ -16,6 +16,7 @@ import java.util.Set;
 @Setter
 @Builder
 public class Role extends BaseEntity {
+
     private String name;
 
     @ManyToMany(mappedBy = "roles")
@@ -24,20 +25,10 @@ public class Role extends BaseEntity {
     private Set<User> users;
 
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "role_authority",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     @JsonManagedReference
     private Set<Authority> authorities;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

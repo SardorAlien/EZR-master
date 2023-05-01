@@ -5,6 +5,7 @@ import com.sendi.v1.security.auth.AuthenticationResponse;
 import com.sendi.v1.security.auth.RegisterRequest;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
+import com.sendi.v1.security.repo.RoleRepository;
 import com.sendi.v1.security.service.JwtService;
 import com.sendi.v1.security.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,8 +29,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RoleRepository roleRepository;
 
-    @Value(value = "")
     private String adminPassword;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
@@ -42,7 +44,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .firstname(registerRequest.getFirstname())
                 .lastname(registerRequest.getLastname())
-                .role(Role.builder().name("USER").build())
+                .role(getRole("USER"))
                 .build();
 
         log.info("user is being saved ");
@@ -52,6 +54,14 @@ public class AuthenticationService {
         log.info("user is saved ");
 
         return generateTokenAndAuthResponse(user);
+    }
+
+    private Role getRole(String name) {
+        Optional<Role> optionalRole = roleRepository.findByName(name);
+        if (optionalRole.isEmpty()) {
+            throw new RuntimeException("Role doesn't exist in the database");
+        }
+        return optionalRole.get();
     }
 
     private boolean usernameExists(RegisterRequest registerRequest) {

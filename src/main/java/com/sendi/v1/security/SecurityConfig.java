@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JpaUserDetailsService jpaUserDetailsService;
@@ -30,9 +32,8 @@ public class SecurityConfig {
         httpSecurity.csrf().disable()
                 .authorizeRequests(authorize-> {
                     authorize
+                            .antMatchers("/api/v1/demo-controller/**").permitAll()
                             .antMatchers("/api/v1/auth/**").permitAll()
-//                            .antMatchers("/api/v1/customers/**").hasRole("ADMIN")
-//                            .antMatchers("/api/v1/flashcards/**").hasRole("USER")
                             .anyRequest().authenticated();
                 })
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

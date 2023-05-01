@@ -1,7 +1,7 @@
 package com.sendi.v1.service;
 
-import com.sendi.v1.dto.DeckDTO;
-import com.sendi.v1.dto.FlashcardDTO;
+import com.sendi.v1.service.dto.DeckDTO;
+import com.sendi.v1.service.dto.FlashcardDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

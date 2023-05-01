@@ -1,6 +1,6 @@
 package com.sendi.v1.service;
 
-import com.sendi.v1.dto.DeckDTO;
+import com.sendi.v1.service.dto.DeckDTO;
 import com.sendi.v1.security.domain.User;
 import org.springframework.data.domain.Pageable;
 

@@ -1,7 +1,7 @@
 package com.sendi.v1.security.service;
 
-import com.sendi.v1.dto.UserDTO;
-import com.sendi.v1.dto.mapper.UserMapper;
+import com.sendi.v1.service.dto.UserDTO;
+import com.sendi.v1.service.dto.mapper.UserMapper;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.RoleRepository;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         log.info("new user = {} is being saved", user);
+        Optional<User> existingUserOptional = userRepository.findByEmail(user.getEmail());
+        if (existingUserOptional.isEmpty()) {
+            userRepository.save(user);
+        }
 
-        return userRepository.save(user);
+        return user;
     }
 
     @Override

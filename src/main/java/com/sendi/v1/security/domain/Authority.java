@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sendi.v1.domain.BaseEntity;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 
@@ -22,15 +21,5 @@ public class Authority extends BaseEntity {
      @ManyToMany(mappedBy = "authorities")
      @JsonBackReference
      private Set<Role> roles;
-
-     @Override
-     public boolean equals(Object o) {
-          return super.equals(o);
-     }
-
-     @Override
-     public int hashCode() {
-          return super.hashCode();
-     }
 }
 
