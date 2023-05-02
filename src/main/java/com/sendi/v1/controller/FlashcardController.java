@@ -1,10 +1,10 @@
 package com.sendi.v1.controller;
 
 import com.sendi.v1.service.dto.FlashcardDTO;
-import com.sendi.v1.security.permission.FlashcardCreatePermission;
-import com.sendi.v1.security.permission.FlashcardDeletePermission;
-import com.sendi.v1.security.permission.FlashcardReadPermission;
-import com.sendi.v1.security.permission.FlashcardUpdatePermission;
+import com.sendi.v1.security.config.permission.FlashcardCreatePermission;
+import com.sendi.v1.security.config.permission.FlashcardDeletePermission;
+import com.sendi.v1.security.config.permission.FlashcardReadPermission;
+import com.sendi.v1.security.config.permission.FlashcardUpdatePermission;
 import com.sendi.v1.service.FlashcardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

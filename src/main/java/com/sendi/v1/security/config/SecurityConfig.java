@@ -1,4 +1,4 @@
-package com.sendi.v1.security;
+package com.sendi.v1.security.config;
 
 import com.sendi.v1.security.jwt.JwtAuthenticationFilter;
 import com.sendi.v1.security.service.JpaUserDetailsService;
@@ -30,12 +30,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-                .authorizeRequests(authorize-> {
-                    authorize
-                            .antMatchers("/api/v1/demo-controller/**").permitAll()
-                            .antMatchers("/api/v1/auth/**").permitAll()
-                            .anyRequest().authenticated();
-                })
+                .authorizeRequests(authorize-> authorize
+                        .antMatchers("/api/v1/demo-controller/**").permitAll()
+                        .antMatchers("/api/v1/auth/**").permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider())

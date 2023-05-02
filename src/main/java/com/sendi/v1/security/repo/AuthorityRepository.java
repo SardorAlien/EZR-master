@@ -3,5 +3,9 @@ package com.sendi.v1.security.repo;
 import com.sendi.v1.security.domain.Authority;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AuthorityRepository extends JpaRepository<Authority, Long> {
+import java.util.List;
+import java.util.Optional;
+
+public interface AuthorityRepository extends JpaRepository<Authority, Long>{
+    Optional<Authority> findByPermission(String permission);
 }

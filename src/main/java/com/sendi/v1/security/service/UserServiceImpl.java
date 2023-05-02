@@ -1,11 +1,13 @@
 package com.sendi.v1.security.service;
 
+import com.sendi.v1.exception.custom.UserDuplicationException;
 import com.sendi.v1.service.dto.UserDTO;
 import com.sendi.v1.service.dto.mapper.UserMapper;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.RoleRepository;
 import com.sendi.v1.security.repo.UserRepository;
+import com.sendi.v1.util.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,20 +22,25 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
     @Override
-    public User saveUser(User user) {
+    public User createOrUpdate(User user) throws UserDuplicationException {
         log.info("new user = {} is being saved", user);
-        Optional<User> existingUserOptional = userRepository.findByEmail(user.getEmail());
-        if (existingUserOptional.isEmpty()) {
-            userRepository.save(user);
-        }
 
-        return user;
+        userRepository.findByUsername(user.getUsername())
+                .ifPresent((existingUser) -> {
+                    throw new UserDuplicationException(ErrorMessages.USER_DUPLICATION.getMessage() + existingUser.getUsername());
+                });
+
+        userRepository.findByEmail(user.getEmail())
+                .ifPresent((existingUser) -> {
+                    throw new UserDuplicationException(ErrorMessages.USER_DUPLICATION_EMAIL.getMessage() + existingUser.getEmail());
+                });
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -72,10 +79,7 @@ public class UserServiceImpl implements UserService {
 
         List<User> users = userRepository.findAll();
 
-//        log.info("users => {}", users);
-
         List<UserDTO> userDTOList = userMapper.toUserDTOs(users);
-//        log.info("userDTOList => {}", userDTOList);
 
         return userDTOList;
     }
@@ -93,5 +97,21 @@ public class UserServiceImpl implements UserService {
         UserDTO newUserDTO = userMapper.toDTO(user);
 
         return newUserDTO;
+    }
+
+    @Override
+    public long count() {
+        return userRepository.count();
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .get();
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

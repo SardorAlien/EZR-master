@@ -1,4 +1,4 @@
-package com.sendi.v1.security.permission;
+package com.sendi.v1.security.config.permission;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -6,6 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('flashcard.update')")
-public @interface FlashcardUpdatePermission {
+@PreAuthorize("hasAuthority('deck.update')")
+public @interface DeckUpdatePermission {
 }

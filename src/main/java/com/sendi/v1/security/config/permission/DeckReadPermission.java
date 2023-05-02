@@ -1,4 +1,4 @@
-package com.sendi.v1.security.permission;
+package com.sendi.v1.security.config.permission;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 

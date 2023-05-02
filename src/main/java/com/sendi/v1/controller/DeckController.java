@@ -1,10 +1,10 @@
 package com.sendi.v1.controller;
 
 import com.sendi.v1.service.dto.DeckDTO;
-import com.sendi.v1.security.permission.DeckCreatePermission;
-import com.sendi.v1.security.permission.DeckDeletePermission;
-import com.sendi.v1.security.permission.DeckReadPermission;
-import com.sendi.v1.security.permission.DeckUpdatePermission;
+import com.sendi.v1.security.config.permission.DeckCreatePermission;
+import com.sendi.v1.security.config.permission.DeckDeletePermission;
+import com.sendi.v1.security.config.permission.DeckReadPermission;
+import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.DeckService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

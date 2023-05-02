@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @Builder
 public class Authority extends BaseEntity {
-
+     @Column(nullable = false, unique = true)
      private String permission;
 
      @ManyToMany(mappedBy = "authorities")
