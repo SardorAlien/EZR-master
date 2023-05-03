@@ -31,7 +31,6 @@ public class AuthenticationService {
     private String adminPassword;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) throws Exception {
-//        validateUsername(registerRequest);
         Role role = promoteAdminIfFirst();
 
         User user = User.builder()

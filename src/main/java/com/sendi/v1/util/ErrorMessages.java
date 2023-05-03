@@ -3,6 +3,8 @@ package com.sendi.v1.util;
 public enum ErrorMessages {
     USER_DUPLICATION("User already exists with the username: "),
     USER_DUPLICATION_EMAIL("User already exists with the email: "),
+    NO_SUCH_USER("No such user with username: "),
+    NO_SUCH_USER_ID("No such user with id: "),
 
     NO_SUCH_AUTHORITY("No such authority with permission: " ),
     NO_SUCH_AUTHORITY_ID("No such authority with id: " ),

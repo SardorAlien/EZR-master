@@ -25,7 +25,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Component
 public class DefaultLoader implements CommandLineRunner {
-//    private final UserRepository userRepository;
     private final UserService userService;
     private final AuthorityService authorityService;
     private final RoleService roleService;
@@ -95,7 +94,7 @@ public class DefaultLoader implements CommandLineRunner {
             userService.createOrUpdate(user2);
 
         } catch (Exception e) {
-            log.error(String.valueOf(e.getStackTrace()));
+            Arrays.stream(e.getStackTrace()).forEach(stackTraceElement -> log.error(String.valueOf(stackTraceElement)));
         } finally {
             log.info("Users loaded: {}", userService.count());
         }

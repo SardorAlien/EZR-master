@@ -1,5 +1,6 @@
 package com.sendi.v1.security.service;
 
+import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.exception.custom.UserDuplicationException;
 import com.sendi.v1.service.dto.UserDTO;
 import com.sendi.v1.service.dto.mapper.UserMapper;
@@ -70,7 +71,8 @@ public class UserServiceImpl implements UserService {
     public User getUser(String username) {
         log.info("user is being fetched with username = {}", username);
 
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with this username"));
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchUserException(ErrorMessages.NO_SUCH_USER.getMessage() + username));
     }
 
     @Override
@@ -86,13 +88,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
 
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid userId");
-        }
-
-        User user = userOptional.get();
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                    new NoSuchUserException(ErrorMessages.NO_SUCH_USER_ID.getMessage() + id)
+                );
 
         UserDTO newUserDTO = userMapper.toDTO(user);
 
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .get();
+                .orElseThrow(() -> new NoSuchUserException(ErrorMessages.NO_SUCH_USER.getMessage() + username));
     }
 
     @Override

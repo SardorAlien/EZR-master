@@ -37,6 +37,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoSuchUserException.class)
+    public ResponseEntity<Object> handleNoSuchUserException(NoSuchUserException exception, WebRequest webRequest) {
+        return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<?> globalExceptionHandler(Exception exception) {
 //        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
