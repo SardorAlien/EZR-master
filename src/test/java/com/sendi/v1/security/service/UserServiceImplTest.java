@@ -1,15 +1,17 @@
 package com.sendi.v1.security.service;
 
 import com.sendi.v1.exception.custom.NoSuchUserException;
+import com.sendi.v1.exception.custom.UserDuplicationException;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.service.dto.UserDTO;
 import com.sendi.v1.service.dto.mapper.UserMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
     @InjectMocks
@@ -32,8 +34,16 @@ class UserServiceImplTest {
     @Mock
     UserMapper userMapper;
 
+    private static final String NO_SUCH_USER_ID_EXC_MESSAGE = "No such user with id: ";
+
+    @BeforeEach
+    void setUp() {
+
+    }
+
+
     @Test
-    void shouldCreateOrUpdate() {
+    void shouldCreateOrUpdate() throws Exception {
         // Arrange
         User expected = User.builder()
                 .firstname("Draco")
@@ -48,6 +58,27 @@ class UserServiceImplTest {
         // Assert
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void shouldThrowCreateOrUpdate() throws Exception {
+        // Arrange
+        User user = User.builder()
+                .firstname("Ron")
+                .lastname("Weasley")
+                .build();
+
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User alreadySavedUser = userService.createOrUpdate(new User());
+
+        when(userRepository.save(alreadySavedUser)).thenThrow(UserDuplicationException.class);
+
+        // Act & Assert
+        assertNotNull(alreadySavedUser);
+        assertThrows(UserDuplicationException.class, () -> {
+            userService.createOrUpdate(alreadySavedUser);
+        });
     }
 
     @Test
@@ -73,13 +104,12 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldGetUserThrowsNoSuch() {
-        lenient().when(userRepository.findByUsername(anyString())).thenThrow(NoSuchUserException.class);
+    void shouldThrowsGetUser() {
+        when(userRepository.findByUsername(anyString())).thenThrow(NoSuchUserException.class);
 
         assertThrows(NoSuchUserException.class, () -> {
             userService.getUser("test");
         });
-
         verify(userRepository, times(1)).findByUsername(anyString());
         verifyNoMoreInteractions(userRepository);
     }
@@ -118,6 +148,19 @@ class UserServiceImplTest {
         assertThat(userService.getUserById(getRandomLong())).usingRecursiveComparison().isEqualTo(expectedDTO);
         verify(userRepository, times(1)).findById(anyLong());
         verify(userMapper, times(1)).toDTO(any(User.class));
+    }
+
+    @Test
+    void shouldThrowGetUserById() {
+        when(userRepository.findById(anyLong())).thenThrow(new NoSuchUserException(NO_SUCH_USER_ID_EXC_MESSAGE));
+
+        Exception exception = assertThrows(NoSuchUserException.class, () -> {
+            userService.getUserById(getRandomLong());
+        });
+
+        String actualMessage = exception.getMessage();
+
+        assertEquals(NO_SUCH_USER_ID_EXC_MESSAGE, actualMessage);
     }
 
     @Test
