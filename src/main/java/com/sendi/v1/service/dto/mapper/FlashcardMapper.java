@@ -15,7 +15,7 @@ public interface FlashcardMapper {
 
     Flashcard toEntity(FlashcardDTO flashcardDTO);
 
-    Set<FlashcardDTO> toFlashcardDTOs(Set<Flashcard> flashcards);
+    Set<FlashcardDTO> toDTOs(Set<Flashcard> flashcards);
 
-    Set<Flashcard> toFlashcards(Set<FlashcardDTO> flashcardDTOs);
+    Set<Flashcard> toEntities(Set<FlashcardDTO> flashcardDTOs);
 }

@@ -62,7 +62,7 @@ public class AuthenticationService {
         ));
 
         User user = userService
-                .getUserByUsername(authenticationRequest.getUsername());
+                .getUser(authenticationRequest.getUsername());
 
         return generateTokenAndAuthResponse(user);
     }

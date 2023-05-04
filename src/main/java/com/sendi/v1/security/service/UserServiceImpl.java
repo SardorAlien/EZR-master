@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
         List<User> users = userRepository.findAll();
 
-        List<UserDTO> userDTOList = userMapper.toUserDTOs(users);
+        List<UserDTO> userDTOList = userMapper.toDTOs(users);
 
         return userDTOList;
     }
@@ -102,12 +102,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public long count() {
         return userRepository.count();
-    }
-
-    @Override
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchUserException(ErrorMessages.NO_SUCH_USER.getMessage() + username));
     }
 
     @Override

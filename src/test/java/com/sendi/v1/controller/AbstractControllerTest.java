@@ -16,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EzrApplication.class)
 @WebAppConfiguration
 public abstract class AbstractControllerTest {

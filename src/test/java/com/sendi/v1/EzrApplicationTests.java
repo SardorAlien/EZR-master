@@ -8,6 +8,7 @@ class EzrApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
