@@ -1,13 +1,15 @@
 package com.sendi.v1.exception.custom;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.sendi.v1.util.ErrorMessages;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class NoSuchAuthorityException extends RuntimeException {
+public class NoSuchAuthorityException extends NoSuchObjectException {
     private static final long serialVersionUID = -2745656796321435768L;
 
-    public NoSuchAuthorityException(String message) {
-        super(message);
+    public NoSuchAuthorityException(String permission) {
+        super(ErrorMessages.NO_SUCH_AUTHORITY.getMessage() + permission);
+    }
+
+    public NoSuchAuthorityException(long id) {
+        super(ErrorMessages.NO_SUCH_AUTHORITY_ID.getMessage() + id);
     }
 }

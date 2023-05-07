@@ -12,7 +12,17 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(UserDuplicationException.class)
+    @ExceptionHandler(DuplicationException.class)
+    public ResponseEntity<Object> handleDuplicateException(DuplicationException exception, WebRequest webRequest) {
+        return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoSuchObjectException.class)
+    public ResponseEntity<Object> handleNoSuchObjectException(NoSuchObjectException exception, WebRequest webRequest) {
+        return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    /*@ExceptionHandler(UserDuplicationException.class)
     public ResponseEntity<Object> handleUserDuplicateException(UserDuplicationException exception, WebRequest webRequest) {
         return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -40,7 +50,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(NoSuchUserException.class)
     public ResponseEntity<Object> handleNoSuchUserException(NoSuchUserException exception, WebRequest webRequest) {
         return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
+    }*/
 
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<?> globalExceptionHandler(Exception exception) {

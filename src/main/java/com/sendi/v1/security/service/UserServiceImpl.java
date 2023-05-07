@@ -8,10 +8,8 @@ import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.RoleRepository;
 import com.sendi.v1.security.repo.UserRepository;
-import com.sendi.v1.util.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,12 +31,12 @@ public class UserServiceImpl implements UserService {
 
         userRepository.findByUsername(user.getUsername())
                 .ifPresent((existingUser) -> {
-                    throw new UserDuplicationException(ErrorMessages.USER_DUPLICATION.getMessage() + existingUser.getUsername());
+                    throw new UserDuplicationException(existingUser.getUsername());
                 });
 
         userRepository.findByEmail(user.getEmail())
                 .ifPresent((existingUser) -> {
-                    throw new UserDuplicationException(ErrorMessages.USER_DUPLICATION_EMAIL.getMessage() + existingUser.getEmail());
+                    throw new UserDuplicationException(existingUser.getEmail());
                 });
 
         return userRepository.save(user);
@@ -72,7 +70,7 @@ public class UserServiceImpl implements UserService {
         log.info("user is being fetched with username = {}", username);
 
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchUserException(ErrorMessages.NO_SUCH_USER.getMessage() + username));
+                .orElseThrow(() -> new NoSuchUserException(username));
     }
 
     @Override
@@ -91,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
-                    new NoSuchUserException(ErrorMessages.NO_SUCH_USER_ID.getMessage() + id)
+                        new NoSuchUserException(id)
                 );
 
         UserDTO newUserDTO = userMapper.toDTO(user);

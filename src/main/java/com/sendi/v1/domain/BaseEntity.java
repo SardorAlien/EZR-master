@@ -8,12 +8,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -26,7 +25,7 @@ public class BaseEntity implements Serializable {
 //    @SequenceGenerator(name = "base_seq", sequenceName = "base_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;

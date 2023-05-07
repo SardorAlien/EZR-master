@@ -1,13 +1,11 @@
 package com.sendi.v1.exception.custom;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.sendi.v1.util.ErrorMessages;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class RoleDuplicationException extends RuntimeException {
+public class RoleDuplicationException extends DuplicationException {
     private static final long serialVersionUID = -7255663927912634937L;
 
-    public RoleDuplicationException(String message) {
-        super(message);
+    public RoleDuplicationException(String roleName) {
+        super(ErrorMessages.ROLE_DUPLICATION.getMessage() + roleName);
     }
 }
