@@ -15,7 +15,6 @@ public class DemoController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> sayHello() {
-
         return ResponseEntity.ok("Hello there from demoController!");
     }
 }

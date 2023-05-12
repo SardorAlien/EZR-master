@@ -3,14 +3,10 @@ package com.sendi.v1.security.service;
 import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.exception.custom.UserDuplicationException;
 import com.sendi.v1.security.domain.User;
-import com.sendi.v1.security.repo.RoleRepository;
 import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.service.dto.UserDTO;
 import com.sendi.v1.service.dto.mapper.UserMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,7 +50,7 @@ class UserServiceImplTest {
 
         // Assert
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
@@ -95,8 +91,8 @@ class UserServiceImplTest {
         User actual = userService.getUser(username);
 
         // Assert
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-        verify(userRepository, times(1)).findByUsername(anyString());
+        assertThat(actual).isEqualTo(expected);
+        verify(userRepository).findByUsername(anyString());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -107,7 +103,7 @@ class UserServiceImplTest {
         assertThrows(NoSuchUserException.class, () -> {
             userService.getUser("test");
         });
-        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userRepository).findByUsername(anyString());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -121,8 +117,8 @@ class UserServiceImplTest {
 
         // Act & Assert
         assertThat(userService.getUsers()).hasSize(2);
-        verify(userRepository, times(1)).findAll();
-        verify(userMapper, times(1)).toDTOs(anyList());
+        verify(userRepository).findAll();
+        verify(userMapper).toDTOs(anyList());
         verifyNoMoreInteractions(userRepository);
         verifyNoMoreInteractions(userMapper);
     }
@@ -143,8 +139,8 @@ class UserServiceImplTest {
 
         // Act & Assert
         assertThat(userService.getUserById(getRandomLong())).usingRecursiveComparison().isEqualTo(expectedDTO);
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(userMapper, times(1)).toDTO(any(User.class));
+        verify(userRepository).findById(anyLong());
+        verify(userMapper).toDTO(any(User.class));
     }
 
     @Test
@@ -168,7 +164,7 @@ class UserServiceImplTest {
         when(userRepository.count()).thenReturn(expected);
 
         assertThat(userService.count()).usingRecursiveComparison().isEqualTo(expected);
-        verify(userRepository, times(1)).count();
+        verify(userRepository).count();
     }
 
     private long getRandomLong() {
