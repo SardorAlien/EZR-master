@@ -100,9 +100,10 @@ class UserServiceImplTest {
     void shouldThrowsGetUser() {
         when(userRepository.findByUsername(anyString())).thenThrow(NoSuchUserException.class);
 
-        assertThrows(NoSuchUserException.class, () -> {
+        Exception exception = assertThrows(NoSuchUserException.class, () -> {
             userService.getUser("test");
         });
+
         verify(userRepository).findByUsername(anyString());
         verifyNoMoreInteractions(userRepository);
     }
@@ -144,17 +145,14 @@ class UserServiceImplTest {
     }
 
     @Test
-    @Disabled
     void shouldThrowGetUserById() {
-        when(userRepository.findById(anyLong())).thenThrow(new NoSuchUserException(NO_SUCH_USER_ID_EXC_MESSAGE));
-
         Exception exception = assertThrows(NoSuchUserException.class, () -> {
             userService.getUserById(getRandomLong());
         });
 
         String actualMessage = exception.getMessage();
 
-        assertEquals(NO_SUCH_USER_ID_EXC_MESSAGE, actualMessage);
+        assertThat(actualMessage).contains(NO_SUCH_USER_ID_EXC_MESSAGE);
     }
 
     @Test

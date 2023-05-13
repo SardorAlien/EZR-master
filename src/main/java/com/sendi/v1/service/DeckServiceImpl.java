@@ -1,6 +1,8 @@
 package com.sendi.v1.service;
 
 import com.sendi.v1.domain.Deck;
+import com.sendi.v1.exception.custom.NoSuchDeckException;
+import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.service.dto.DeckDTO;
 import com.sendi.v1.service.dto.mapper.DeckMapper;
 import com.sendi.v1.service.dto.mapper.UserMapper;
@@ -8,6 +10,7 @@ import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.security.service.UserService;
+import com.sendi.v1.util.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -27,29 +30,23 @@ public class DeckServiceImpl implements DeckService {
     private final DeckRepository deckRepo;
     private final DeckMapper deckMapper;
     private final UserRepository userRepo;
-    private final UserService userService;
-    private final UserMapper userMapper;
 
     @Override
     public List<DeckDTO> getDecksByUser(User user) {
-        if (user == null) {
-            return Collections.emptyList();
-        }
-
-        List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user)
-                .stream()
-                .map(deckMapper::toDTO)
-                .collect(Collectors.toList());
-
-        log.info("This is deckDTOList {}", deckDTOs);
-
-        return deckDTOs;
+        return getDecksByUser(user, Pageable.unpaged());
     }
 
     @Override
     public List<DeckDTO> getDecksByUser(User user, Pageable pageable) {
         if (user == null) {
             return Collections.emptyList();
+        }
+
+        if (pageable.isUnpaged()) {
+            return deckRepo.findAllByUser(user)
+                    .stream()
+                    .map(deckMapper::toDTO)
+                    .collect(Collectors.toList());
         }
 
         List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user, pageable)
@@ -64,7 +61,12 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public List<DeckDTO> getDecksByUser(User user, int page, int size) {
-        return null;
+        if (page < 0) {
+            return Collections.emptyList();
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return getDecksByUser(user, pageRequest);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class DeckServiceImpl implements DeckService {
         Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid userId");
+            throw new NoSuchUserException(userId);
         }
 
         User user = userOptional.get();
@@ -85,7 +87,7 @@ public class DeckServiceImpl implements DeckService {
         Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid userId");
+            throw new NoSuchUserException(userId);
         }
 
         User user = userOptional.get();
@@ -98,7 +100,7 @@ public class DeckServiceImpl implements DeckService {
         Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid userId");
+            throw new NoSuchUserException(userId);
         }
 
         User user = userOptional.get();
@@ -111,7 +113,7 @@ public class DeckServiceImpl implements DeckService {
         Optional<Deck> deckOptional = deckRepo.findById(id);
 
         if (deckOptional.isEmpty()) {
-            throw new RuntimeException("Invalid deckId");
+            throw new NoSuchDeckException(id);
         }
 
         Deck deck = deckOptional.get();
@@ -127,7 +129,7 @@ public class DeckServiceImpl implements DeckService {
         Optional<User> userOptional = userRepo.findById(userId);
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid userId");
+            throw new NoSuchUserException(userId);
         }
 
         User user = userOptional.get();

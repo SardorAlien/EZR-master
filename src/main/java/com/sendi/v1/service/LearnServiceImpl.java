@@ -29,6 +29,7 @@ public class LearnServiceImpl implements LearnService {
 
         return getNotLearnedFlashcards(deckId);
     }
+
     private List<FlashcardDTO> getAllFlashcards(Long deckId) {
         List<FlashcardDTO> flashcardDTOs = flashcardService.getFlashcardsByDeckId(deckId);
 
