@@ -71,52 +71,32 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public List<DeckDTO> getDecksByUserId(Long userId) {
-        Optional<User> userOptional = userRepo.findById(userId);
-
-        if (userOptional.isEmpty()) {
-            throw new NoSuchUserException(userId);
-        }
-
-        User user = userOptional.get();
+        User user = Optional.ofNullable(userRepo.findById(userId))
+                .orElseThrow(() -> new NoSuchUserException(userId))
+                .get();
 
         return getDecksByUser(user);
     }
 
     @Override
     public List<DeckDTO> getDecksByUserId(Long userId, Pageable pageable) {
-        Optional<User> userOptional = userRepo.findById(userId);
-
-        if (userOptional.isEmpty()) {
-            throw new NoSuchUserException(userId);
-        }
-
-        User user = userOptional.get();
+        User user = Optional.ofNullable(userRepo.findById(userId))
+                .orElseThrow(() -> new NoSuchUserException(userId))
+                .get();
 
         return getDecksByUser(user, pageable);
     }
 
     @Override
     public List<DeckDTO> getDecksByUserId(Long userId, int page, int size) {
-        Optional<User> userOptional = userRepo.findById(userId);
-
-        if (userOptional.isEmpty()) {
-            throw new NoSuchUserException(userId);
-        }
-
-        User user = userOptional.get();
-
-        return getDecksByUser(user, PageRequest.of(page, size));
+        return getDecksByUserId(userId, PageRequest.of(page, size));
     }
 
     @Override
     public DeckDTO getOneById(Long id) {
-        Optional<Deck> deckOptional = deckRepo.findById(id);
-
-        if (deckOptional.isEmpty()) {
-            throw new NoSuchDeckException(id);
-        }
-
-        Deck deck = deckOptional.get();
+        Deck deck = Optional.ofNullable(deckRepo.findById(id))
+                .orElseThrow(() -> new NoSuchDeckException(id))
+                .get();
 
         DeckDTO newDeckDTO = deckMapper.toDTO(deck);
 
@@ -126,13 +106,9 @@ public class DeckServiceImpl implements DeckService {
     @Override
     @Transactional
     public DeckDTO createOrUpdate(Long userId, DeckDTO deckDTO) {
-        Optional<User> userOptional = userRepo.findById(userId);
-
-        if (userOptional.isEmpty()) {
-            throw new NoSuchUserException(userId);
-        }
-
-        User user = userOptional.get();
+        User user = Optional.ofNullable(userRepo.findById(userId))
+                .orElseThrow(() -> new NoSuchUserException(userId))
+                .get();
 
         Deck deck = deckMapper.toEntity(deckDTO);
         deck.setUser(user);

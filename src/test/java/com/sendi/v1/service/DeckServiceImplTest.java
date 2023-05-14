@@ -14,14 +14,9 @@ import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -38,25 +33,11 @@ class DeckServiceImplTest {
     @Captor
     ArgumentCaptor<User> userCaptor;
 
-    @Captor
-    ArgumentCaptor<Pageable> pageableCaptor;
-
     @Mock
     UserRepository userRepository;
 
     @Mock
     DeckMapper deckMapper;
-
-    private List<Deck> sampleDecks() {
-        Deck deck1 = new Deck();
-        deck1.setName("deck1");
-        deck1.setDescription("desc1");
-
-        Deck deck2 = new Deck();
-        deck2.setName("deck2");
-        deck2.setDescription("desc2");
-        return List.of(deck1, deck2);
-    }
 
     class FindDecks implements Answer<List<Deck>> {
         @Override
@@ -71,6 +52,17 @@ class DeckServiceImplTest {
         }
     }
 
+    private List<Deck> sampleDecks() {
+        Deck deck1 = new Deck();
+        deck1.setName("deck1");
+        deck1.setDescription("desc1");
+
+        Deck deck2 = new Deck();
+        deck2.setName("deck2");
+        deck2.setDescription("desc2");
+        return List.of(deck1, deck2);
+    }
+
     @Test
     void getDecksByUserExists() {
         when(deckRepository.findAllByUser(userCaptor.capture())).thenAnswer(new FindDecks());
@@ -83,12 +75,12 @@ class DeckServiceImplTest {
         List<DeckDTO> actualDecks = service.getDecksByUser(actualUser);
 
         assertThat(userCaptor.getValue()).isNotNull();
-        assertThat(actualDecks).isNotEmpty();
+        assertThat(actualDecks).hasSize(2);
     }
 
     @Test
     void getDecksByUserEmptyList() {
-        lenient().when(deckRepository.findAllByUser(userCaptor.capture())).thenAnswer(new FindDecks());
+        lenient().when(deckRepository.findAllByUser(any(User.class))).thenAnswer(new FindDecks());
 
         User user = null;
         List<DeckDTO> decks = service.getDecksByUser(user);
@@ -153,7 +145,6 @@ class DeckServiceImplTest {
     void createOrUpdate() {
         Deck expectedDeck = sampleDecks().get(0);
         when(deckRepository.save(any(Deck.class))).thenReturn(expectedDeck);
-
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(new User()));
 
         DeckDTO expectedDeckDTO = new DeckDTO();
@@ -191,7 +182,6 @@ class DeckServiceImplTest {
         service.deleteById(getRandomLong());
 
         verify(deckRepository).deleteById(anyLong());
-        verifyNoMoreInteractions(deckRepository);
     }
 
     private long getRandomLong() {

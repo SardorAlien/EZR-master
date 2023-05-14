@@ -2,6 +2,7 @@ package com.sendi.v1.service;
 
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Flashcard;
+import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.service.dto.DeckDTO;
 import com.sendi.v1.service.dto.FlashcardDTO;
 import com.sendi.v1.service.dto.mapper.DeckMapper;
@@ -28,7 +29,6 @@ public class FlashcardServiceImpl implements FlashcardService {
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
-    private final DeckService deckService;
 
     @Override
     public FlashcardDTO getOneById(Long flashcardId) {
@@ -53,10 +53,10 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         Deck deck = deckMapper.toEntity(deckDTO);
 
-        List<Flashcard> flashcards = flashcardRepo.findAllByDeck(deck);
-
-        List<FlashcardDTO> flashcardDTOList =
-                flashcards.stream().map(flashcardMapper::toDTO).collect(Collectors.toList());
+        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck)
+                .stream()
+                .map(flashcardMapper::toDTO)
+                .collect(Collectors.toList());
 
         log.info("flashcardDTOList: {}", flashcardDTOList);
 
@@ -65,13 +65,9 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId) {
-        Optional<Deck> deckOptional = deckRepo.findById(deckId);
-
-        if (deckOptional.isEmpty()) {
-            throw new RuntimeException("Invalid deckId");
-        }
-
-        Deck deck = deckOptional.get();
+        Deck deck = Optional.ofNullable(deckRepo.findById(deckId))
+                .orElseThrow(() -> new NoSuchDeckException(deckId))
+                .get();
 
         List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck)
                 .stream()
@@ -86,7 +82,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         Optional<Deck> deckOptional = deckRepo.findById(deckId);
 
         if (deckOptional.isEmpty()) {
-            throw new RuntimeException("Invalid deckId");
+            throw new NoSuchDeckException(deckId);
         }
 
         Deck deck = deckOptional.get();
@@ -104,7 +100,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         Optional<Deck> deckOptional = deckRepo.findById(deckId);
 
         if (deckOptional.isEmpty()) {
-            throw new RuntimeException("Invalid deckId");
+            throw new NoSuchDeckException(deckId);
         }
 
         Deck deck = deckOptional.get();
@@ -123,7 +119,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         Optional<Deck> deckOptional = deckRepo.findById(deckId);
 
         if (deckOptional.isEmpty()) {
-            throw new RuntimeException("Invalid deckId");
+            throw new NoSuchDeckException(deckId);
         }
 
         Deck deck = deckOptional.get();
@@ -141,6 +137,6 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Transactional
     @Override
     public void deleteById(Long flashcardId) {
-        flashcardRepo.deleteFlashcardById(flashcardId);
+        flashcardRepo.deleteById(flashcardId);
     }
 }
