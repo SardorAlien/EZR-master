@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.sql.SQLException;
 
 @SpringBootApplication
-@EnableJpaAuditing
 public class EzrApplication {
 
 	public static void main(String[] args) {

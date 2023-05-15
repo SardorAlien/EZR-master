@@ -8,6 +8,7 @@ import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.DeckService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public class DeckController {
     @DeckCreatePermission
     @PostMapping("{userId}")
     public ResponseEntity<DeckDTO> createDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
-        return ResponseEntity.ok(deckService.createOrUpdate(userId, deckDTO));
+        return new ResponseEntity<>(deckService.createOrUpdate(userId, deckDTO), HttpStatus.CREATED);
     }
 
     @DeckUpdatePermission
