@@ -23,13 +23,13 @@ public class DeckController {
 
     @DeckReadPermission
     @GetMapping(value = "{userId}/all")
-    public ResponseEntity<List<DeckDTO>> getAllDecks(@PathVariable Long userId) {
+    public ResponseEntity<List<DeckDTO>> getAllDecksByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(deckService.getDecksByUserId(userId));
     }
 
     @DeckReadPermission
     @GetMapping(value = "{userId}/all", name = "getAllDecksWithPagination", params = {"page", "size"})
-    public ResponseEntity<List<DeckDTO>> getAllDecks(@RequestParam("page") int page,
+    public ResponseEntity<List<DeckDTO>> getAllDecksByUserId(@RequestParam("page") int page,
                                                      @RequestParam("size") int size,
                                                      @PathVariable Long userId) {
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -39,13 +39,13 @@ public class DeckController {
 
     @DeckCreatePermission
     @PostMapping("{userId}")
-    public ResponseEntity<DeckDTO> createDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
+    public ResponseEntity<DeckDTO> createDeckByUserId(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
         return new ResponseEntity<>(deckService.createOrUpdate(userId, deckDTO), HttpStatus.CREATED);
     }
 
     @DeckUpdatePermission
     @PutMapping("{userId}")
-    public ResponseEntity<DeckDTO> updateDeck(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
+    public ResponseEntity<DeckDTO> updateDeckByUserId(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
         return ResponseEntity.ok(deckService.createOrUpdate(userId, deckDTO));
     }
 
