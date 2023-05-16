@@ -5,19 +5,16 @@ import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.service.dto.DeckDTO;
 import com.sendi.v1.service.dto.mapper.DeckMapper;
-import com.sendi.v1.service.dto.mapper.UserMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
-import com.sendi.v1.security.service.UserService;
-import com.sendi.v1.util.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +29,13 @@ public class DeckServiceImpl implements DeckService {
     private final UserRepository userRepo;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DeckDTO> getDecksByUser(User user) {
         return getDecksByUser(user, Pageable.unpaged());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DeckDTO> getDecksByUser(User user, Pageable pageable) {
         if (user == null) {
             return Collections.emptyList();
@@ -60,6 +59,7 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DeckDTO> getDecksByUser(User user, int page, int size) {
         if (page < 0) {
             return Collections.emptyList();
@@ -70,6 +70,7 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DeckDTO> getDecksByUserId(Long userId) {
         User user = Optional.ofNullable(userRepo.findById(userId))
                 .orElseThrow(() -> new NoSuchUserException(userId))
@@ -79,6 +80,7 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DeckDTO> getDecksByUserId(Long userId, Pageable pageable) {
         User user = Optional.ofNullable(userRepo.findById(userId))
                 .orElseThrow(() -> new NoSuchUserException(userId))
@@ -88,11 +90,13 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DeckDTO> getDecksByUserId(Long userId, int page, int size) {
         return getDecksByUserId(userId, PageRequest.of(page, size));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DeckDTO getOneById(Long id) {
         Deck deck = Optional.ofNullable(deckRepo.findById(id))
                 .orElseThrow(() -> new NoSuchDeckException(id))
@@ -121,6 +125,7 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         deckRepo.deleteById(id);
     }

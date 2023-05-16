@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +30,7 @@ public class FlashcardServiceImpl implements FlashcardService {
     private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
 
+    @Transactional(readOnly = true)
     @Override
     public FlashcardDTO getOneById(Long flashcardId) {
         Optional<Flashcard> flashcardOptional = flashcardRepo.findById(flashcardId);
@@ -45,6 +46,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         return newFlashcardDTO;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeck(DeckDTO deckDTO) {
         if (deckDTO == null) {
@@ -63,6 +65,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         return flashcardDTOList;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId) {
         Deck deck = Optional.ofNullable(deckRepo.findById(deckId))
@@ -77,6 +80,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         return flashcardDTOList;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, Pageable pageable) {
         Optional<Deck> deckOptional = deckRepo.findById(deckId);
@@ -95,6 +99,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         return flashcardDTOList;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, int page, int size) {
         Optional<Deck> deckOptional = deckRepo.findById(deckId);

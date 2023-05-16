@@ -8,6 +8,7 @@ import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class LearnServiceImpl implements LearnService {
     private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
 
+    @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> beginLearningSession(Long deckId) {
         if (isDeckFinished(deckId)) {
