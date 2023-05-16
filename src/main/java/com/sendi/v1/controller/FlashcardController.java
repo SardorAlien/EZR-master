@@ -8,6 +8,7 @@ import com.sendi.v1.security.config.permission.FlashcardUpdatePermission;
 import com.sendi.v1.service.FlashcardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class FlashcardController {
     @FlashcardCreatePermission
     @PostMapping("{deckId}")
     public ResponseEntity<FlashcardDTO> createFlashcard(@PathVariable Long deckId, @RequestBody FlashcardDTO flashcardDTO) {
-        return ResponseEntity.ok(flashcardService.createOrUpdate(deckId, flashcardDTO));
+        return new ResponseEntity<>(flashcardService.createOrUpdate(deckId, flashcardDTO), HttpStatus.CREATED);
     }
 
     @FlashcardUpdatePermission

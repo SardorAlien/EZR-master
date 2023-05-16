@@ -14,7 +14,11 @@ public enum ErrorMessages {
     NO_SUCH_ROLE_ID("No such role with id: "),
     ROLE_DUPLICATION("Role already exists with the role name: "),
 
-    NO_SUCH_DECK_ID("No such deck with id: ");
+    NO_SUCH_DECK_ID("No such deck with id: "),
+
+    NO_SUCH_FLASHCARD_ID("No such flashcard with id: ")
+
+    ;
 
     private String message;
 
