@@ -64,11 +64,15 @@ public class AuthenticationService {
         User user = userService
                 .getUser(authenticationRequest.getUsername());
 
+        log.info("User in authenticate method: {}", user.toString());
+
         return generateTokenAndAuthResponse(user);
     }
 
     private AuthenticationResponse generateTokenAndAuthResponse(User user) {
         String jwtToken = jwtService.generateToken(user);
+
+        log.info("User in generateTokenAndAuthResponse method: {}", user.toString());
 
         log.info("JwtToken while building a response = {}", jwtToken);
 

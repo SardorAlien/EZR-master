@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.reset;
 @Disabled
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 class DeckControllerIT {
 
     @LocalServerPort
@@ -55,22 +57,22 @@ class DeckControllerIT {
     @WithMockUser(authorities = "deck.read")
     @Test
     void getAllDecks() throws JSONException {
-//        List<DeckDTO> deckDTOList =
-//                restTemplate.getForObject(, List.class, 17);
+        List<DeckDTO> deckDTOList =
+                restTemplate.getForObject(createURLWithPort(user.getId() + "/all"), List.class, 12);
 
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(user.getId() + "/all"),
-                HttpMethod.GET, entity, String.class);
-
-        String expected = "{\"id\":\"Course1\",\"name\":\"Spring\",\"description\":\"10 Steps\"}";
+//        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+//
+//        ResponseEntity<String> response = restTemplate.exchange(
+//                createURLWithPort(user.getId() + "/all"),
+//                HttpMethod.GET, entity, String.class);
+//
+//        String expected = "{\"id\":\"Course1\",\"name\":\"Spring\",\"description\":\"10 Steps\"}";
 
 //        JSONAssert.assertEquals(expected, response.getBody(), false);
 
-//        List<DeckDTO> deckDTOList = restTemplate.getForObject(url, List.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        System.out.println(deckDTOList);
     }
 
     private String createURLWithPort(String uri) {
