@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = DefaultJpaTestConfiguration.class)
 class UserRepositoryTest {
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     User user;
 
