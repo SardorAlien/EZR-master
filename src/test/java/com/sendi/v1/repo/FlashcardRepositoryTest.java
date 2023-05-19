@@ -30,9 +30,9 @@ class FlashcardRepositoryTest {
     @Autowired
     DeckRepository deckRepository;
 
-    Deck deck;
-    Flashcard flashcard1;
-    Flashcard flashcard2;
+    private Deck deck;
+    private Flashcard flashcard1;
+    private Flashcard flashcard2;
 
     @BeforeEach
     void setUp() {
