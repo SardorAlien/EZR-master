@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -50,6 +51,7 @@ class DeckControllerIT {
     @BeforeEach
     void setUp() {
         user = userRepository.findAll().get(0);
+        System.out.println(user.getId());
         headers = new HttpHeaders();
     }
 
@@ -57,22 +59,20 @@ class DeckControllerIT {
     @WithMockUser(authorities = "deck.read")
     @Test
     void getAllDecks() throws JSONException {
-        List<DeckDTO> deckDTOList =
-                restTemplate.getForObject(createURLWithPort(user.getId() + "/all"), List.class, 12);
+//        List<DeckDTO> deckDTOList =
+//                restTemplate.getForObject(createURLWithPort(user.getId() + "/all"), List.class);
 
-//        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-//
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                createURLWithPort(user.getId() + "/all"),
-//                HttpMethod.GET, entity, String.class);
-//
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(user.getId() + "/all"),
+                HttpMethod.GET, entity, String.class);
+
 //        String expected = "{\"id\":\"Course1\",\"name\":\"Spring\",\"description\":\"10 Steps\"}";
-
+//
 //        JSONAssert.assertEquals(expected, response.getBody(), false);
 
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        System.out.println(deckDTOList);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     private String createURLWithPort(String uri) {

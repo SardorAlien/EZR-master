@@ -26,7 +26,6 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) throws Exception {
 
         log.info("Request coming in");
-
         return ResponseEntity.ok(authenticationService.register(registerRequest));
     }
 
