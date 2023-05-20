@@ -1,4 +1,4 @@
-package com.sendi.v1.service.dto;
+package com.sendi.v1.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;

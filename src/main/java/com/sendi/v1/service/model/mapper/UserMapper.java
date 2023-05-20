@@ -1,6 +1,6 @@
-package com.sendi.v1.service.dto.mapper;
+package com.sendi.v1.service.model.mapper;
 
-import com.sendi.v1.service.dto.UserDTO;
+import com.sendi.v1.service.model.UserDTO;
 import com.sendi.v1.security.domain.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

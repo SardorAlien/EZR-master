@@ -11,4 +11,5 @@ import java.util.List;
 public interface DeckRepository extends PagingAndSortingRepository<Deck, Long> {
     List<Deck> findAllByUser(User user);
     List<Deck> findAllByUser(User user, Pageable pageable);
+    boolean existsById(Long id);
 }

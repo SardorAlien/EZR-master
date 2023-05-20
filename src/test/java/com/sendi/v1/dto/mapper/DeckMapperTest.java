@@ -1,8 +1,8 @@
 package com.sendi.v1.dto.mapper;
 
 import com.sendi.v1.domain.Deck;
-import com.sendi.v1.service.dto.DeckDTO;
-import com.sendi.v1.service.dto.mapper.DeckMapper;
+import com.sendi.v1.service.model.DeckDTO;
+import com.sendi.v1.service.model.mapper.DeckMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

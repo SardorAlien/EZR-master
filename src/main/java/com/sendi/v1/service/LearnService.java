@@ -1,6 +1,6 @@
 package com.sendi.v1.service;
 
-import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
 
 import java.util.List;
 

@@ -3,8 +3,8 @@ package com.sendi.v1.service;
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.exception.custom.NoSuchUserException;
-import com.sendi.v1.service.dto.DeckDTO;
-import com.sendi.v1.service.dto.mapper.DeckMapper;
+import com.sendi.v1.service.model.DeckDTO;
+import com.sendi.v1.service.model.mapper.DeckMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
@@ -128,5 +128,10 @@ public class DeckServiceImpl implements DeckService {
     @Transactional
     public void deleteById(Long id) {
         deckRepo.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(Long deckId) {
+        return deckRepo.existsById(deckId);
     }
 }

@@ -1,6 +1,6 @@
 package com.sendi.v1.service;
 
-import com.sendi.v1.service.dto.DeckDTO;
+import com.sendi.v1.service.model.DeckDTO;
 import com.sendi.v1.security.domain.User;
 import org.springframework.data.domain.Pageable;
 
@@ -25,4 +25,5 @@ public interface DeckService {
 
     void deleteById(Long deckId);
 
+    boolean existsById(Long deckId);
 }

@@ -5,10 +5,10 @@ import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
-import com.sendi.v1.service.dto.DeckDTO;
-import com.sendi.v1.service.dto.FlashcardDTO;
-import com.sendi.v1.service.dto.mapper.DeckMapper;
-import com.sendi.v1.service.dto.mapper.FlashcardMapper;
+import com.sendi.v1.service.model.DeckDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
+import com.sendi.v1.service.model.mapper.DeckMapper;
+import com.sendi.v1.service.model.mapper.FlashcardMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -52,13 +52,18 @@ class FlashcardServiceImplTest {
     class FindFlashcards implements Answer<List<Flashcard>> {
         @Override
         public List<Flashcard> answer(InvocationOnMock invocationOnMock) throws Throwable {
-            Deck deck = invocationOnMock.getArgument(0);
-
-            if (deck == null) {
-                return Collections.emptyList();
-            } else {
+            if (invocationOnMock.getArgument(0) instanceof Deck) {
+                Deck deck = invocationOnMock.getArgument(0);
+                if (deck == null) {
+                    return Collections.emptyList();
+                } else {
+                    return sampleFlashcards();
+                }
+            } else if (invocationOnMock.getArgument(0) instanceof Long) {
                 return sampleFlashcards();
             }
+
+            throw new IllegalStateException("Invalid argument");
         }
     }
 
@@ -109,34 +114,26 @@ class FlashcardServiceImplTest {
 
     @Test
     void getFlashcardsByDeckId() {
-        Deck expectedDeck = new Deck();
-        expectedDeck.setId(1L);
-        expectedDeck.setName("deck1");
-        expectedDeck.setDescription("desc1");
-        when(deckRepository.findById(anyLong())).thenReturn(Optional.of(expectedDeck));
-        when(flashcardRepository.findAllByDeck(any(Deck.class))).thenAnswer(new FindFlashcards());
+        when(deckRepository.existsById(1L)).thenReturn(true);
+        when(flashcardRepository.findAllByDeckId(1L)).thenAnswer(new FindFlashcards());
 
-        DeckDTO actualDeckDTO = new DeckDTO();
-        actualDeckDTO.setId(expectedDeck.getId());
-        actualDeckDTO.setName(expectedDeck.getName());
-        actualDeckDTO.setDescription(expectedDeck.getDescription());
-        List<FlashcardDTO> actualFlashcardDTOs = service.getFlashcardsByDeckId(actualDeckDTO.getId());
+        List<FlashcardDTO> actualFlashcardDTOs = service.getFlashcardsByDeckId(1L);
 
         assertThat(actualFlashcardDTOs).hasSize(2);
 
-        verify(deckRepository).findById(anyLong());
-        verify(flashcardRepository).findAllByDeck(any(Deck.class));
+        verify(deckRepository).existsById(anyLong());
+        verify(flashcardRepository).findAllByDeckId(anyLong());
     }
 
     @Test
     void getFlashcardsByDeckIdThrowNoSuchDeckException() {
-        when(deckRepository.findById(anyLong())).thenThrow(NoSuchDeckException.class);
+        when(deckRepository.existsById(anyLong())).thenThrow(NoSuchDeckException.class);
 
         assertThrows(NoSuchDeckException.class, () -> {
             service.getFlashcardsByDeckId(anyLong());
         });
 
-        verify(deckRepository).findById(anyLong());
+        verify(deckRepository).existsById(anyLong());
         verify(flashcardRepository, never()).findAllByDeck(any(Deck.class));
     }
 

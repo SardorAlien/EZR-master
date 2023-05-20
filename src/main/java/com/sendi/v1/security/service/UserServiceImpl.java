@@ -2,8 +2,8 @@ package com.sendi.v1.security.service;
 
 import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.exception.custom.UserDuplicationException;
-import com.sendi.v1.service.dto.UserDTO;
-import com.sendi.v1.service.dto.mapper.UserMapper;
+import com.sendi.v1.service.model.UserDTO;
+import com.sendi.v1.service.model.mapper.UserMapper;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.RoleRepository;

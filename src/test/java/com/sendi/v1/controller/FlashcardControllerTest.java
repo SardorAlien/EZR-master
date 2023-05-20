@@ -7,7 +7,7 @@ import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.security.service.JpaUserDetailsService;
 import com.sendi.v1.security.service.JwtService;
 import com.sendi.v1.service.FlashcardService;
-import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

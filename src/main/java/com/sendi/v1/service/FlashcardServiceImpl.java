@@ -3,10 +3,10 @@ package com.sendi.v1.service;
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
-import com.sendi.v1.service.dto.DeckDTO;
-import com.sendi.v1.service.dto.FlashcardDTO;
-import com.sendi.v1.service.dto.mapper.DeckMapper;
-import com.sendi.v1.service.dto.mapper.FlashcardMapper;
+import com.sendi.v1.service.model.DeckDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
+import com.sendi.v1.service.model.mapper.DeckMapper;
+import com.sendi.v1.service.model.mapper.FlashcardMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;
@@ -68,30 +68,17 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId) {
-        Deck deck = Optional.ofNullable(deckRepo.findById(deckId))
-                .orElseThrow(() -> new NoSuchDeckException(deckId))
-                .get();
-
-        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck)
-                .stream()
-                .map(flashcardMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return flashcardDTOList;
+        return getFlashcardsByDeckId(deckId, Pageable.unpaged());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, Pageable pageable) {
-        Optional<Deck> deckOptional = deckRepo.findById(deckId);
-
-        if (deckOptional.isEmpty()) {
+        if (!deckRepo.existsById(deckId)) {
             throw new NoSuchDeckException(deckId);
         }
 
-        Deck deck = deckOptional.get();
-
-        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck, pageable)
+        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeckId(deckId)
                 .stream()
                 .map(flashcardMapper::toDTO)
                 .collect(Collectors.toList());
@@ -102,20 +89,7 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Transactional(readOnly = true)
     @Override
     public List<FlashcardDTO> getFlashcardsByDeckId(Long deckId, int page, int size) {
-        Optional<Deck> deckOptional = deckRepo.findById(deckId);
-
-        if (deckOptional.isEmpty()) {
-            throw new NoSuchDeckException(deckId);
-        }
-
-        Deck deck = deckOptional.get();
-
-        List<FlashcardDTO> flashcardDTOList = flashcardRepo.findAllByDeck(deck, PageRequest.of(page, size))
-                .stream()
-                .map(flashcardMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return flashcardDTOList;
+        return getFlashcardsByDeckId(deckId, PageRequest.of(page, size));
     }
 
     @Override

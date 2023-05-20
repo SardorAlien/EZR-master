@@ -1,6 +1,6 @@
 package com.sendi.v1.controller;
 
-import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
 import com.sendi.v1.service.LearnService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

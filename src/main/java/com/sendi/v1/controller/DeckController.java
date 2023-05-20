@@ -1,6 +1,6 @@
 package com.sendi.v1.controller;
 
-import com.sendi.v1.service.dto.DeckDTO;
+import com.sendi.v1.service.model.DeckDTO;
 import com.sendi.v1.security.config.permission.DeckCreatePermission;
 import com.sendi.v1.security.config.permission.DeckDeletePermission;
 import com.sendi.v1.security.config.permission.DeckReadPermission;
@@ -63,9 +63,9 @@ public class DeckController {
         return ResponseEntity.ok(deckService.getOneById(deckId));
     }
 
-    @PostMapping(value = "{deckId}", params = {"count"})
+    @PostMapping(value = "{deckId}/multiple-choice-quiz", params = {"count"})
     public ResponseEntity<?> beginTest(@PathVariable Long deckId, @RequestParam Integer count) {
 //        testService.beginTest(deckId, count)
-        return ResponseEntity.ok("not implemented");
+        return ResponseEntity.ok("not implemented yet");
     }
 }

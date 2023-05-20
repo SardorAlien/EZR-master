@@ -1,6 +1,6 @@
 package com.sendi.v1.controller;
 
-import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
 import com.sendi.v1.security.config.permission.FlashcardCreatePermission;
 import com.sendi.v1.security.config.permission.FlashcardDeletePermission;
 import com.sendi.v1.security.config.permission.FlashcardReadPermission;

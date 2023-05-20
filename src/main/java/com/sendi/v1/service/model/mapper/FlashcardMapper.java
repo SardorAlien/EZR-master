@@ -1,7 +1,7 @@
-package com.sendi.v1.service.dto.mapper;
+package com.sendi.v1.service.model.mapper;
 
 import com.sendi.v1.domain.Flashcard;
-import com.sendi.v1.service.dto.FlashcardDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

@@ -1,7 +1,7 @@
 package com.sendi.v1.controller;
 
 
-import com.sendi.v1.service.dto.UserDTO;
+import com.sendi.v1.service.model.UserDTO;
 import com.sendi.v1.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

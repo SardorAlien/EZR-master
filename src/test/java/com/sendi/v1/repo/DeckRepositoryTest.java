@@ -74,4 +74,14 @@ class DeckRepositoryTest {
         assertThat(actualDecks).hasSize(1);
         assertThat(actualDecks.get(0).getName()).isEqualTo(deck2.getName());
     }
+
+    @Test
+    void existsById() {
+        userRepository.save(user);
+        deckRepository.save(deck1);
+
+        boolean doesExist = deckRepository.existsById(deck1.getId());
+
+        assertTrue(doesExist);
+    }
 }

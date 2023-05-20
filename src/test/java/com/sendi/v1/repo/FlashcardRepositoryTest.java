@@ -65,21 +65,35 @@ class FlashcardRepositoryTest {
     void findAllByDeckPageable() {
         deckRepository.save(deck);
 
-        Flashcard flashcard3 = new Flashcard();
-        flashcard3.setTerm("term 3");
-        flashcard3.setDefinition("definition 3");
-        flashcard3.setDeck(deck);
+        flashcardRepository.saveAll(List.of(flashcard1, flashcard2));
 
-        Flashcard flashcard4 = new Flashcard();
-        flashcard4.setTerm("term 4");
-        flashcard4.setDefinition("definition 4");
-        flashcard4.setDeck(deck);
-
-        flashcardRepository.saveAll(List.of(flashcard1, flashcard2, flashcard3, flashcard4));
-
-        PageRequest pageRequest = PageRequest.of(1, 2);
+        PageRequest pageRequest = PageRequest.of(1, 1);
         List<Flashcard> flashcards = flashcardRepository.findAllByDeck(deck, pageRequest);
 
-        assertThat(flashcards.get(0).getTerm()).isEqualTo(flashcard3.getTerm());
+        assertThat(flashcards).hasSize(1);
+        assertThat(flashcards.get(0).getTerm()).isEqualTo(flashcard2.getTerm());
+    }
+
+    @Test
+    void findAllByDeckId() {
+        deckRepository.save(deck);
+        flashcardRepository.saveAll(List.of(flashcard1, flashcard2));
+
+        List<Flashcard> flashcards = flashcardRepository.findAllByDeckId(deck.getId());
+
+        assertThat(flashcards.get(0).getTerm()).isEqualTo(flashcard1.getTerm());
+    }
+
+    @Test
+    void findAllByDeckIdPageable() {
+        deckRepository.save(deck);
+
+        flashcardRepository.saveAll(List.of(flashcard1, flashcard2));
+
+        PageRequest pageRequest = PageRequest.of(1, 1);
+        List<Flashcard> flashcards = flashcardRepository.findAllByDeckId(deck.getId(), pageRequest);
+
+        assertThat(flashcards).hasSize(1);
+        assertThat(flashcards.get(0).getTerm()).isEqualTo(flashcard2.getTerm());
     }
 }

@@ -13,6 +13,8 @@ import java.util.List;
 public interface FlashcardRepository extends PagingAndSortingRepository<Flashcard, Long> {
     List<Flashcard> findAllByDeck(Deck deck);
     List<Flashcard> findAllByDeck(Deck deck, Pageable pageable);
+    List<Flashcard> findAllByDeckId(Long deckId);
+    List<Flashcard> findAllByDeckId(Long deckId, Pageable pageable);
 
 //    @Modifying(flushAutomatically = true, clearAutomatically = true)
 //    @Query(value = "UPDATE flashcards f SET f.isLearned = :isLearned WHERE f.id in :flashcardIds AND f.deck.id = :deckId")
