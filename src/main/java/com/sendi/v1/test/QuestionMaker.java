@@ -15,23 +15,23 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class QuestionMaker {
-//    private FlashcardRepository flashcardRepository;
-//
+    private FlashcardRepository flashcardRepository;
+
 //    public Set<Question> make(long deckId, int questionCount, AnswerWith answerWith) {
 //        List<Flashcard> flashcards = getFlashcardsAndShuffleByQuestionCount(deckId, questionCount);
-//        return convertToQuestions(flashcards, answerWith);
+////        return convertToQuestions(flashcards, answerWith);
 //    }
-//
-//    private List<Flashcard> getFlashcards(long deckId) {
-//        return flashcardRepository.findAllByDeckId(deckId);
-//    }
-//
-//    private List<Flashcard> getFlashcardsAndShuffleByQuestionCount(long deckId, int questionCount) {
-//        List<Flashcard> flashcards = getFlashcards(deckId);
-//        Collections.shuffle(flashcards);
-//        return flashcards.subList(0, questionCount);
-//    }
-//
+
+    private List<Flashcard> getFlashcards(long deckId) {
+        return flashcardRepository.findAllByDeckId(deckId);
+    }
+
+    private List<Flashcard> getFlashcardsAndShuffleByQuestionCount(long deckId, int questionCount) {
+        List<Flashcard> flashcards = getFlashcards(deckId);
+        Collections.shuffle(flashcards);
+        return flashcards.subList(0, questionCount);
+    }
+
 //    private Set<Question> convertToQuestions(List<Flashcard> flashcards, AnswerWith answerWith) {
 //        Set<Question> questions = new HashSet<>();
 //        if (answerWith.equals(AnswerWith.TERM)) {

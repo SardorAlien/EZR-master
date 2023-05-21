@@ -22,9 +22,6 @@ public class TestServiceImpl implements TestService {
                                 final boolean isWrittenIncluded,
                                 final AnswerWith answerWith
     ) {
-//        List<Flashcard> flashcards = questionMaker.getFlashcardsAndShuffleByQuestionCount(deckId, questionCount);
-//        questionMaker.make(deckId, questionCount, answerWith);
-
         return responseMaker.make(deckId,
                 questionCount,
                 isTrueFalseQuestionsIncluded,
