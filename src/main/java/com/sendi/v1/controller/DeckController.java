@@ -6,20 +6,24 @@ import com.sendi.v1.security.config.permission.DeckDeletePermission;
 import com.sendi.v1.security.config.permission.DeckReadPermission;
 import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.DeckService;
+import com.sendi.v1.test.TestRequest;
+import com.sendi.v1.test.TestResponse;
+import com.sendi.v1.test.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/decks")
+@RequestMapping(value = "/api/v1/decks")
 @RequiredArgsConstructor
 public class DeckController {
     private final DeckService deckService;
-//    private final TestService testService;
+    private final TestService testService;
 
     @DeckReadPermission
     @GetMapping(value = "{userId}/all")
@@ -63,9 +67,10 @@ public class DeckController {
         return ResponseEntity.ok(deckService.getOneById(deckId));
     }
 
-    @PostMapping(value = "{deckId}/multiple-choice-quiz", params = {"count"})
-    public ResponseEntity<?> beginTest(@PathVariable Long deckId, @RequestParam Integer count) {
-//        testService.beginTest(deckId, count)
-        return ResponseEntity.ok("not implemented yet");
+    @DeckReadPermission
+    @GetMapping(value = "{deckId}/test")
+    public ResponseEntity<TestResponse> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest) {
+        System.out.println("####################### testrequest " + testRequest);
+        return ResponseEntity.ok(testService.getTest(deckId, testRequest));
     }
 }

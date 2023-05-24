@@ -12,4 +12,6 @@ public interface DeckRepository extends PagingAndSortingRepository<Deck, Long> {
     List<Deck> findAllByUser(User user);
     List<Deck> findAllByUser(User user, Pageable pageable);
     boolean existsById(Long id);
+    List<Deck> findAllByUserId(long userId);
+    List<Deck> findAllByUserId(long userId, Pageable pageable);
 }

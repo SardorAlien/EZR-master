@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -14,6 +15,13 @@ public class TestResponse {
     private Set<MultipleChoiceQuestion> multipleChoiceQuestions;
     private Set<MatchingQuestion> matchingQuestions;
     private Set<WrittenQuestion> writtenQuestions;
+
+    public TestResponse() {
+        trueFalseQuestions = new HashSet<>();
+        multipleChoiceQuestions = new HashSet<>();
+        matchingQuestions = new HashSet<>();
+        writtenQuestions = new HashSet<>();
+    }
 
     public void addTrueFalseQuestion(TrueFalseQuestion trueFalseQuestion) {
         trueFalseQuestions.add(trueFalseQuestion);

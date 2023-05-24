@@ -9,27 +9,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    private TestResponse testResponse;
-    private ResponseMaker responseMaker;
-    private QuestionMaker questionMaker;
+//    private TestResponse testResponse;
+    private final ResponseMaker responseMaker;
+//    private QuestionMaker questionMaker;
 
     @Override
-    public TestResponse getTest(final long deckId,
-                                final int questionCount,
-                                final boolean isTrueFalseQuestionsIncluded,
-                                final boolean isMultipleChoiceIncluded,
-                                final boolean isMatchingQuestionsIncluded,
-                                final boolean isWrittenIncluded,
-                                final AnswerWith answerWith
-    ) {
-        return responseMaker.make(deckId,
-                questionCount,
-                isTrueFalseQuestionsIncluded,
-                isMultipleChoiceIncluded,
-                isMatchingQuestionsIncluded,
-                isWrittenIncluded,
-                answerWith);
-
+    public TestResponse getTest(long deckId, TestRequest testRequest) {
+        return responseMaker.make(deckId, testRequest);
     }
-
 }

@@ -14,30 +14,23 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class ResponseMaker {
-    private QuestionMaker questionMaker;
-    private TestResponse testResponse;
-    private FlashcardRepository flashcardRepository;
+    private final FlashcardRepository flashcardRepository;
 
-    public TestResponse make(long deckId,
-                             int questionCount,
-                             boolean isTrueFalseQuestionsIncluded,
-                             boolean isMultipleChoiceIncluded,
-                             boolean isMatchingQuestionsIncluded,
-                             boolean isWrittenIncluded,
-                             AnswerWith answerWith) {
+    public TestResponse make(long deckId, TestRequest testRequest) {
+        TestResponse testResponse = new TestResponse();
+
         int countQuestionTypes = 0;
-        if (isTrueFalseQuestionsIncluded) countQuestionTypes++;
-        if (isMultipleChoiceIncluded) countQuestionTypes++;
-        if (isMatchingQuestionsIncluded) countQuestionTypes++;
-        if (isWrittenIncluded) countQuestionTypes++;
+        if (testRequest.isTrueFalseQuestionsIncluded()) countQuestionTypes++;
+        if (testRequest.isMultipleChoiceIncluded()) countQuestionTypes++;
+        if (testRequest.isMatchingQuestionsIncluded()) countQuestionTypes++;
+        if (testRequest.isWrittenIncluded()) countQuestionTypes++;
 
-        List<Flashcard> flashcardsWillBeEliminated = getFlashcards(deckId);
-        List<Flashcard> allFlashcards = List.copyOf(flashcardsWillBeEliminated);
+        List<Flashcard> flashcardsWillBeEliminated = getFlashcardsAndShuffleByQuestionCount(deckId, testRequest.getQuestionCount());
+        List<Flashcard> allFlashcards = getFlashcards(deckId);
 
         int randomFlashcardId = 0;
-
-        if (isTrueFalseQuestionsIncluded) {
-            for (int i = 0; i < countQuestionTypes; i++) {
+        if (testRequest.isTrueFalseQuestionsIncluded()) {
+            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 
@@ -52,9 +45,8 @@ public class ResponseMaker {
                 flashcardsWillBeEliminated.remove(randomFlashcardId);
             }
         }
-
-        if (isMultipleChoiceIncluded) {
-            for (int i = 0; i < countQuestionTypes; i++) {
+        if (testRequest.isMultipleChoiceIncluded()) {
+            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 
@@ -88,8 +80,8 @@ public class ResponseMaker {
             }
         }
 
-        if (isMatchingQuestionsIncluded) {
-            for (int i = 0; i < countQuestionTypes; i++) {
+        if (testRequest.isMatchingQuestionsIncluded()) {
+            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 
@@ -105,8 +97,8 @@ public class ResponseMaker {
             }
         }
 
-        if (isWrittenIncluded) {
-            for (int i = 0; i < countQuestionTypes; i++) {
+        if (testRequest.isWrittenIncluded()) {
+            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 

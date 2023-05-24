@@ -95,20 +95,22 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Override
     @Transactional
     public FlashcardDTO createOrUpdate(Long deckId, FlashcardDTO flashcardDTO) {
-        Optional<Deck> deckOptional = deckRepo.findById(deckId);
+        Deck deck = Optional.ofNullable(deckRepo.findById(deckId))
+                .orElseThrow(() -> new NoSuchDeckException(deckId))
+                .get();
 
-        if (deckOptional.isEmpty()) {
-            throw new NoSuchDeckException(deckId);
-        }
-
-        Deck deck = deckOptional.get();
+        log.info("########### deck {}", deck);
 
         Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
         flashcard.setDeck(deck);
 
+        log.info("########### flashcard {}", flashcard);
+
         flashcardRepo.save(flashcard);
 
         FlashcardDTO newFlashcardDTO = flashcardMapper.toDTO(flashcard);
+
+        log.info("########## flashcardDTO {}", flashcardDTO);
 
         return newFlashcardDTO;
     }
