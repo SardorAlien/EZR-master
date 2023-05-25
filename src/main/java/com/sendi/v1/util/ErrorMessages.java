@@ -16,8 +16,9 @@ public enum ErrorMessages {
 
     NO_SUCH_DECK_ID("No such deck with id: "),
 
-    NO_SUCH_FLASHCARD_ID("No such flashcard with id: ")
+    NO_SUCH_FLASHCARD_ID("No such flashcard with id: "),
 
+    QUESTION_COUNT_LESS("Question count cannot be less than 20. Your number of questions requested: ")
     ;
 
     private String message;

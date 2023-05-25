@@ -26,17 +26,47 @@ public class ResponseMaker {
         if (testRequest.isWrittenIncluded()) countQuestionTypes++;
 
         List<Flashcard> flashcardsWillBeEliminated = getFlashcardsAndShuffleByQuestionCount(deckId, testRequest.getQuestionCount());
+
+        int sizeSlicer = flashcardsWillBeEliminated.size() / countQuestionTypes;
+
+        int remainder = flashcardsWillBeEliminated.size() % countQuestionTypes;
+
         List<Flashcard> allFlashcards = getFlashcards(deckId);
 
         int randomFlashcardId = 0;
+        int randomFlashcardId2 = 0;
+
         if (testRequest.isTrueFalseQuestionsIncluded()) {
-            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
-                randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
+            for (int i = 0; i < sizeSlicer; i++) {
+                randomFlashcardId = new Random()
+                        .ints(0, flashcardsWillBeEliminated.size())
+                        .findFirst()
+                        .getAsInt();
+
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
+
+                randomFlashcardId2 = new Random()
+                        .ints(0, flashcardsWillBeEliminated.size())
+                        .findFirst()
+                        .getAsInt();
+
+                String answerForUser = "";
+
+                int randomAnswerForUser = new Random()
+                        .ints(0, 2)
+                        .findFirst()
+                        .getAsInt();
+
+                if (randomAnswerForUser == 0) {
+                    answerForUser = flashcard.getDefinition();
+                } else {
+                    answerForUser = flashcardsWillBeEliminated.get(randomFlashcardId2).getDefinition();
+                }
 
                 TrueFalseQuestion trueFalseQuestion = TrueFalseQuestion.builder()
                         .question(flashcard.getTerm())
-                        .answer(flashcard.getDefinition())
+                        .actualAnswer(flashcard.getDefinition())
+                        .answerForUser(answerForUser)
                         .flashcardId(flashcard.getId())
                         .build();
 
@@ -45,25 +75,38 @@ public class ResponseMaker {
                 flashcardsWillBeEliminated.remove(randomFlashcardId);
             }
         }
+
         if (testRequest.isMultipleChoiceIncluded()) {
-            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
+            for (int i = 0; i < sizeSlicer + remainder; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 
-                int randomFlashcardIdForSecondary1 = new Random()
+                int randomFlashcardIdForSecondary1 = 0;
+
+                int randomFlashcardIdForSecondary2 = 0;
+
+                int randomFlashcardIdForSecondary3 = 0;
+
+                randomFlashcardIdForSecondary1 = new Random()
                         .ints(0, flashcardsWillBeEliminated.size())
                         .findFirst()
                         .getAsInt();
 
-                int randomFlashcardIdForSecondary2 = new Random()
-                        .ints(0, flashcardsWillBeEliminated.size())
-                        .findFirst()
-                        .getAsInt();
+                while (randomFlashcardIdForSecondary2 == randomFlashcardIdForSecondary1) {
+                    randomFlashcardIdForSecondary2 = new Random()
+                            .ints(0, flashcardsWillBeEliminated.size())
+                            .findFirst()
+                            .getAsInt();
+                }
 
-                int randomFlashcardIdForSecondary3 = new Random()
-                        .ints(0, flashcardsWillBeEliminated.size())
-                        .findFirst()
-                        .getAsInt();
+                while (randomFlashcardIdForSecondary3 == randomFlashcardIdForSecondary1 ||
+                        randomFlashcardIdForSecondary3 == randomFlashcardIdForSecondary2) {
+                    randomFlashcardIdForSecondary3 = new Random()
+                            .ints(0, flashcardsWillBeEliminated.size())
+                            .findFirst()
+                            .getAsInt();
+
+                }
 
                 MultipleChoiceQuestion multipleChoiceQuestion = MultipleChoiceQuestion.builder()
                         .question(flashcard.getTerm())
@@ -81,7 +124,7 @@ public class ResponseMaker {
         }
 
         if (testRequest.isMatchingQuestionsIncluded()) {
-            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
+            for (int i = 0; i < sizeSlicer; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 
@@ -98,7 +141,7 @@ public class ResponseMaker {
         }
 
         if (testRequest.isWrittenIncluded()) {
-            for (int i = 0; i < flashcardsWillBeEliminated.size() / countQuestionTypes; i++) {
+            for (int i = 0; i < sizeSlicer; i++) {
                 randomFlashcardId = new Random().ints(0, flashcardsWillBeEliminated.size()).findFirst().getAsInt();
                 Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
 
@@ -112,6 +155,10 @@ public class ResponseMaker {
 
                 flashcardsWillBeEliminated.remove(randomFlashcardId);
             }
+        }
+
+        if (testResponse.sizeOfAllQuestions() < testRequest.getQuestionCount()) {
+
         }
 
         return testResponse;

@@ -1,6 +1,7 @@
 package com.sendi.v1.exception;
 
 import com.sendi.v1.exception.custom.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,5 +21,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(NoSuchObjectException.class)
     public ResponseEntity<Object> handleNoSuchObjectException(NoSuchObjectException exception, WebRequest webRequest) {
         return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(QuestionCountException.class)
+    public ResponseEntity<Object> handleQuestionCountException(QuestionCountException exception, WebRequest webRequest) {
+        return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }

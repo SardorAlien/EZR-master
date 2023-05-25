@@ -9,5 +9,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class TrueFalseQuestion extends Question {
-    private String answer;
+    private String actualAnswer;
+    private String answerForUser;
 }

@@ -38,4 +38,8 @@ public class TestResponse {
     public void addWrittenQuestion(WrittenQuestion writtenQuestion) {
         writtenQuestions.add(writtenQuestion);
     }
+
+    public int sizeOfAllQuestions() {
+        return multipleChoiceQuestions.size() + matchingQuestions.size() + trueFalseQuestions.size() + writtenQuestions.size();
+    }
 }
