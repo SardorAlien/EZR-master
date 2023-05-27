@@ -99,18 +99,11 @@ public class FlashcardServiceImpl implements FlashcardService {
                 .orElseThrow(() -> new NoSuchDeckException(deckId))
                 .get();
 
-        log.info("########### deck {}", deck);
-
         Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
         flashcard.setDeck(deck);
-
-        log.info("########### flashcard {}", flashcard);
-
         flashcardRepo.save(flashcard);
 
         FlashcardDTO newFlashcardDTO = flashcardMapper.toDTO(flashcard);
-
-        log.info("########## flashcardDTO {}", flashcardDTO);
 
         return newFlashcardDTO;
     }

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
-
-    //    private TestResponse testResponse;
     private final ResponseMaker responseMaker;
-//    private QuestionMaker questionMaker;
 
     @Override
     public TestResponse getTest(long deckId, TestRequest testRequest) {

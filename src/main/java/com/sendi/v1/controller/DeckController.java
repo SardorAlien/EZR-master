@@ -70,7 +70,6 @@ public class DeckController {
     @DeckReadPermission
     @GetMapping(value = "{deckId}/test")
     public ResponseEntity<TestResponse> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest) {
-        System.out.println("####################### testrequest " + testRequest);
         return ResponseEntity.ok(testService.getTest(deckId, testRequest));
     }
 }
