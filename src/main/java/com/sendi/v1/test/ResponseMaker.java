@@ -5,30 +5,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Random;
-
 @Slf4j
 @Service
 public class ResponseMaker {
-    private final QuestionMaker questionMaker;
+    private final FlashcardsForTestService flashcardsForTestService;
 
     private TestRequest testRequest;
     private TestResponse testResponse;
-    private List<Flashcard> flashcardsWillBeEliminated;
     private int sizeSlicer;
-    private int actualSizeFlashcards;
 
     @Autowired
-    public ResponseMaker(QuestionMaker questionMaker) {
-        this.questionMaker = questionMaker;
+    public ResponseMaker(FlashcardsForTestService flashcardsForTestService) {
+        this.flashcardsForTestService = flashcardsForTestService;
     }
 
     public TestResponse make(long deckId, TestRequest testRequest) {
         this.testRequest = testRequest;
         testResponse = new TestResponse();
-        flashcardsWillBeEliminated = questionMaker.getFlashcardsAndShuffleByQuestionCount(deckId, testRequest.getQuestionCount());
-        actualSizeFlashcards = flashcardsWillBeEliminated.size();
+
+        flashcardsForTestService.getFlashcardsByQuestionCountAndShuffle(deckId, testRequest.getQuestionCount());
         generateResponse();
 
         return testResponse;
@@ -46,60 +41,23 @@ public class ResponseMaker {
     private void addTrueFalseQuestionsIfIncluded() {
         if (testRequest.isTrueFalseQuestionsIncluded()) {
             for (int i = 0; i < sizeSlicer; i++) {
-                addTrueFalseQuestion();
+                addTrueFalseQuestionToTestResponse();
             }
         }
     }
 
-    private void addTrueFalseQuestion() {
-        Flashcard flashcard = getRandomFlashcardAndRemoveFromList();
+    private void addTrueFalseQuestionToTestResponse() {
+        Flashcard flashcard = flashcardsForTestService.getRandomFlashcardAndRemoveFromList();
 
-        String answerForUser = getAnswerForUser(flashcard);
-
-        String actualQuestion = "";
-        String actualAnswer = "";
-        if (testRequest.getAnswerWith() == AnswerWith.DEFINITION) {
-            actualQuestion = flashcard.getTerm();
-            actualAnswer = flashcard.getDefinition();
-        } else if (testRequest.getAnswerWith() == AnswerWith.TERM) {
-            actualQuestion = flashcard.getDefinition();
-            actualAnswer = flashcard.getTerm();
-        } else {
-
-        }
-
-        TrueFalseQuestion trueFalseQuestion = TrueFalseQuestion.builder()
-                .question(actualQuestion)
-                .actualAnswer(actualAnswer)
-                .answerForUser(answerForUser)
-                .flashcardId(flashcard.getId())
-                .build();
+        TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion()
+                .prepareQuestion(flashcard, flashcardsForTestService.getFlashcards(), testRequest.getAnswerWith());
 
         testResponse.addTrueFalseQuestion(trueFalseQuestion);
     }
 
-    private String getAnswerForUser(Flashcard flashcard) {
-        int randomFlashcardId = getRandomNumber(flashcardsWillBeEliminated.size());
-        int randomNumberForAnswerForUser = getRandomNumber(2);
-
-        if (randomNumberForAnswerForUser == 1) {
-            flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
-        }
-
-        String answerForUser = "";
-        if (testRequest.getAnswerWith() == AnswerWith.DEFINITION) {
-            answerForUser = flashcard.getDefinition();
-        } else if (testRequest.getAnswerWith() == AnswerWith.TERM) {
-            answerForUser = flashcard.getTerm();
-        } else {
-
-        }
-
-        return answerForUser;
-    }
 
     private void addMultipleChoiceQuestionsIfIncluded() {
-        int remainder = actualSizeFlashcards % getCountQuestionTypes();
+        int remainder = flashcardsForTestService.getActualSizeFlashcards() % getCountQuestionTypes();
 
         if (testRequest.isMultipleChoiceIncluded()) {
             for (int i = 0; i < sizeSlicer + remainder; i++) {
@@ -109,41 +67,10 @@ public class ResponseMaker {
     }
 
     private void addMultipleChoiceQuestion() {
-        Flashcard flashcard = getRandomFlashcardAndRemoveFromList();
-        int[] randomFlashcardIds = getRandomFlashcardIds();
+        Flashcard flashcard = flashcardsForTestService.getRandomFlashcardAndRemoveFromList();
 
-        String actualQuestion = "";
-        String actualAnswer = "";
-        String secondaryAnswer1 = "";
-        String secondaryAnswer2 = "";
-        String secondaryAnswer3 = "";
-
-        if (testRequest.getAnswerWith() == AnswerWith.DEFINITION) {
-            actualQuestion = flashcard.getTerm();
-            actualAnswer = flashcard.getDefinition();
-            secondaryAnswer1 = flashcardsWillBeEliminated.get(randomFlashcardIds[0]).getDefinition();
-            secondaryAnswer2 = flashcardsWillBeEliminated.get(randomFlashcardIds[1]).getDefinition();
-            secondaryAnswer3 = flashcardsWillBeEliminated.get(randomFlashcardIds[2]).getDefinition();
-
-        } else if (testRequest.getAnswerWith() == AnswerWith.TERM) {
-            actualQuestion = flashcard.getDefinition();
-            actualAnswer = flashcard.getTerm();
-
-            secondaryAnswer1 = flashcardsWillBeEliminated.get(randomFlashcardIds[0]).getTerm();
-            secondaryAnswer2 = flashcardsWillBeEliminated.get(randomFlashcardIds[1]).getTerm();
-            secondaryAnswer3 = flashcardsWillBeEliminated.get(randomFlashcardIds[2]).getTerm();
-        } else {
-
-        }
-
-        MultipleChoiceQuestion multipleChoiceQuestion = MultipleChoiceQuestion.builder()
-                .question(actualQuestion)
-                .actualAnswer(actualAnswer)
-                .secondaryAnswer1(secondaryAnswer1)
-                .secondaryAnswer2(secondaryAnswer2)
-                .secondaryAnswer3(secondaryAnswer3)
-                .flashcardId(flashcard.getId())
-                .build();
+        MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion()
+                .prepareQuestion(flashcard, flashcardsForTestService.getFlashcards(), testRequest.getAnswerWith());
 
         testResponse.addMultipleChoiceQuestion(multipleChoiceQuestion);
     }
@@ -157,25 +84,10 @@ public class ResponseMaker {
     }
 
     private void addMatchingQuestion() {
-        Flashcard flashcard = getRandomFlashcardAndRemoveFromList();
+        Flashcard flashcard = flashcardsForTestService.getRandomFlashcardAndRemoveFromList();
 
-        String actualQuestion = "";
-        String actualAnswer = "";
-        if (testRequest.getAnswerWith() == AnswerWith.DEFINITION) {
-            actualQuestion = flashcard.getTerm();
-            actualAnswer = flashcard.getDefinition();
-        } else if (testRequest.getAnswerWith() == AnswerWith.TERM) {
-            actualQuestion = flashcard.getDefinition();
-            actualAnswer = flashcard.getTerm();
-        } else {
-
-        }
-
-        MatchingQuestion matchingQuestion = MatchingQuestion.builder()
-                .question(actualQuestion)
-                .answer(actualAnswer)
-                .flashcardId(flashcard.getId())
-                .build();
+        MatchingQuestion matchingQuestion = new MatchingQuestion()
+                .prepareQuestion(flashcard, testRequest.getAnswerWith());
 
         testResponse.addMatchingQuestion(matchingQuestion);
     }
@@ -189,53 +101,17 @@ public class ResponseMaker {
     }
 
     private void addWrittenQuestion() {
-        Flashcard flashcard = getRandomFlashcardAndRemoveFromList();
+        Flashcard flashcard = flashcardsForTestService.getRandomFlashcardAndRemoveFromList();
 
-        String actualQuestion = "";
-        String actualAnswer = "";
-        if (testRequest.getAnswerWith() == AnswerWith.DEFINITION) {
-            actualQuestion = flashcard.getTerm();
-            actualAnswer = flashcard.getDefinition();
-        } else if (testRequest.getAnswerWith() == AnswerWith.TERM) {
-            actualQuestion = flashcard.getDefinition();
-            actualAnswer = flashcard.getTerm();
-        } else {
-
-        }
-
-        WrittenQuestion writtenQuestion = WrittenQuestion.builder()
-                .question(actualQuestion)
-                .answer(actualAnswer)
-                .flashcardId(flashcard.getId())
-                .build();
+        WrittenQuestion writtenQuestion = new WrittenQuestion()
+                .prepareQuestion(flashcard, testRequest.getAnswerWith());
 
         testResponse.addWrittenQuestion(writtenQuestion);
     }
 
-    private Flashcard getRandomFlashcardAndRemoveFromList() {
-        log.info("getRandomFlashcardAndRemoveFromList truefalse size => {}", testResponse.getTrueFalseQuestions().size());
-        log.info("getRandomFlashcardAndRemoveFromList multiple size => {}", testResponse.getMultipleChoiceQuestions().size());
-        log.info("getRandomFlashcardAndRemoveFromList matching size => {}", testResponse.getMatchingQuestions().size());
-        log.info("getRandomFlashcardAndRemoveFromList written size => {}", testResponse.getWrittenQuestions().size());
-        log.info("getRandomFlashcardAndRemoveFromList flashcards size => {}", flashcardsWillBeEliminated.size());
-
-        int randomFlashcardId = getRandomNumber(flashcardsWillBeEliminated.size());
-
-        Flashcard flashcard = flashcardsWillBeEliminated.get(randomFlashcardId);
-        flashcardsWillBeEliminated.remove(randomFlashcardId);
-
-        return flashcard;
-    }
-
-    private int getRandomNumber(int boundary) {
-        return new Random()
-                .ints(0, boundary)
-                .findFirst()
-                .getAsInt();
-    }
 
     private void makeSizeSlicer() {
-        sizeSlicer = flashcardsWillBeEliminated.size() / getCountQuestionTypes();
+        sizeSlicer = flashcardsForTestService.getActualSizeFlashcards() / getCountQuestionTypes();
     }
 
     private int getCountQuestionTypes() {
@@ -246,20 +122,5 @@ public class ResponseMaker {
         if (testRequest.isWrittenIncluded()) countQuestionTypes++;
 
         return countQuestionTypes;
-    }
-
-    private int[] getRandomFlashcardIds() {
-        int[] randomFlashcardIds = new int[3];
-        randomFlashcardIds[0] = getRandomNumber(flashcardsWillBeEliminated.size());
-        while (randomFlashcardIds[1] == randomFlashcardIds[0]) {
-            randomFlashcardIds[1] = getRandomNumber(flashcardsWillBeEliminated.size());
-        }
-
-        while (randomFlashcardIds[2] == randomFlashcardIds[0] ||
-                randomFlashcardIds[2] == randomFlashcardIds[1]) {
-            randomFlashcardIds[2] = getRandomNumber(flashcardsWillBeEliminated.size());
-        }
-
-        return randomFlashcardIds;
     }
 }
