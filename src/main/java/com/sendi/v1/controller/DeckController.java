@@ -6,13 +6,12 @@ import com.sendi.v1.security.config.permission.DeckDeletePermission;
 import com.sendi.v1.security.config.permission.DeckReadPermission;
 import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.DeckService;
-import com.sendi.v1.test.TestRequest;
-import com.sendi.v1.test.TestResponse;
-import com.sendi.v1.test.TestService;
+import com.sendi.v1.test.*;
+import com.sendi.v1.test.question.TestQuestions;
+import com.sendi.v1.test.question.TestRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +68,13 @@ public class DeckController {
 
     @DeckReadPermission
     @GetMapping(value = "{deckId}/test")
-    public ResponseEntity<TestResponse> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest) {
+    public ResponseEntity<TestQuestions> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest) {
         return ResponseEntity.ok(testService.getTest(deckId, testRequest));
+    }
+
+    @DeckUpdatePermission
+    @PostMapping(value = "{deckId}/test")
+    public ResponseEntity<TestResult> submitTest(@PathVariable Long deckId, @RequestBody TestResultRequest requestForTest) {
+        return ResponseEntity.ok(testService.submitTest(deckId, requestForTest));
     }
 }

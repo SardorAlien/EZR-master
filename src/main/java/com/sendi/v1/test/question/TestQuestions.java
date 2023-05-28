@@ -1,4 +1,4 @@
-package com.sendi.v1.test;
+package com.sendi.v1.test.question;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +10,13 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TestResponse {
+public class TestQuestions {
     private Set<TrueFalseQuestion> trueFalseQuestions;
     private Set<MultipleChoiceQuestion> multipleChoiceQuestions;
     private Set<MatchingQuestion> matchingQuestions;
     private Set<WrittenQuestion> writtenQuestions;
 
-    public TestResponse() {
+    public TestQuestions() {
         trueFalseQuestions = new HashSet<>();
         multipleChoiceQuestions = new HashSet<>();
         matchingQuestions = new HashSet<>();

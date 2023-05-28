@@ -1,41 +1,42 @@
-package com.sendi.v1.test;
+package com.sendi.v1.test.question;
 
 import com.sendi.v1.domain.Flashcard;
+import com.sendi.v1.test.FlashcardsForTestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ResponseMaker {
+public class TestProducerService {
     private final FlashcardsForTestService flashcardsForTestService;
 
     private TestRequest testRequest;
-    private TestResponse testResponse;
+    private TestQuestions testQuestions;
     private int sizeSlicer;
 
     @Autowired
-    public ResponseMaker(FlashcardsForTestService flashcardsForTestService) {
+    public TestProducerService(FlashcardsForTestService flashcardsForTestService) {
         this.flashcardsForTestService = flashcardsForTestService;
     }
 
-    public TestResponse make(long deckId, TestRequest testRequest) {
+    public TestQuestions make(long deckId, TestRequest testRequest) {
         this.testRequest = testRequest;
-        testResponse = new TestResponse();
+        testQuestions = new TestQuestions();
 
         flashcardsForTestService.getFlashcardsByQuestionCountAndShuffle(deckId, testRequest.getQuestionCount());
         generateResponse();
 
-        return testResponse;
+        return testQuestions;
     }
 
-    public TestResponse generateResponse() {
+    public TestQuestions generateResponse() {
         makeSizeSlicer();
         addTrueFalseQuestionsIfIncluded();
         addMultipleChoiceQuestionsIfIncluded();
         addMatchingQuestionsIfIncluded();
         addWrittenQuestionsIfIncluded();
-        return testResponse;
+        return testQuestions;
     }
 
     private void addTrueFalseQuestionsIfIncluded() {
@@ -52,7 +53,7 @@ public class ResponseMaker {
         TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion()
                 .prepareQuestion(flashcard, flashcardsForTestService.getFlashcards(), testRequest.getAnswerWith());
 
-        testResponse.addTrueFalseQuestion(trueFalseQuestion);
+        testQuestions.addTrueFalseQuestion(trueFalseQuestion);
     }
 
 
@@ -72,7 +73,7 @@ public class ResponseMaker {
         MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion()
                 .prepareQuestion(flashcard, flashcardsForTestService.getFlashcards(), testRequest.getAnswerWith());
 
-        testResponse.addMultipleChoiceQuestion(multipleChoiceQuestion);
+        testQuestions.addMultipleChoiceQuestion(multipleChoiceQuestion);
     }
 
     private void addMatchingQuestionsIfIncluded() {
@@ -89,7 +90,7 @@ public class ResponseMaker {
         MatchingQuestion matchingQuestion = new MatchingQuestion()
                 .prepareQuestion(flashcard, testRequest.getAnswerWith());
 
-        testResponse.addMatchingQuestion(matchingQuestion);
+        testQuestions.addMatchingQuestion(matchingQuestion);
     }
 
     private void addWrittenQuestionsIfIncluded() {
@@ -106,7 +107,7 @@ public class ResponseMaker {
         WrittenQuestion writtenQuestion = new WrittenQuestion()
                 .prepareQuestion(flashcard, testRequest.getAnswerWith());
 
-        testResponse.addWrittenQuestion(writtenQuestion);
+        testQuestions.addWrittenQuestion(writtenQuestion);
     }
 
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -18,7 +19,7 @@ public class FlashcardsForTestService {
     private List<Flashcard> flashcards;
     private int actualSizeFlashcards;
 
-    private List<Flashcard> receiveFlashcardsByDeckId(long deckId) {
+    public List<Flashcard> receiveFlashcardsByDeckId(long deckId) {
         flashcards = flashcardRepository.findAllByDeckId(deckId);
         return flashcards;
     }
@@ -54,5 +55,9 @@ public class FlashcardsForTestService {
 
     public int getActualSizeFlashcards() {
         return actualSizeFlashcards;
+    }
+
+    public Optional<Flashcard> getByFlashcardId(long flashcardId) {
+        return flashcardRepository.findById(flashcardId);
     }
 }

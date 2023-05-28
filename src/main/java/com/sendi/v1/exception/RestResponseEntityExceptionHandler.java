@@ -27,4 +27,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<Object> handleQuestionCountException(QuestionCountException exception, WebRequest webRequest) {
         return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MissMatchDeckAndFlashcardException.class)
+    public ResponseEntity<Object> handleMissMatchDeckAndFlashcardException(MissMatchDeckAndFlashcardException exception, WebRequest webRequest) {
+        return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
 }

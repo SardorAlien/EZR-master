@@ -1,7 +1,8 @@
-package com.sendi.v1.test;
+package com.sendi.v1.test.question;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sendi.v1.test.AnswerWith;
 import lombok.*;
 
 @Builder
