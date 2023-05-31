@@ -22,7 +22,10 @@ public class RegisterRequest {
 
     @NotNull
     @NotBlank
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{8,}$")
+    @Pattern(message = "Your password should have at least one capital letter, one lower-case letter, one digit and one symbol. " +
+            "That way your password will be stronger",
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{8,}$")
+    @Size(min = 8)
     private String password;
 
     @NotNull
