@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Entity(name = "users")
 @ToString
 public class User extends BaseEntity implements UserDetails, CredentialsContainer {
+
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 

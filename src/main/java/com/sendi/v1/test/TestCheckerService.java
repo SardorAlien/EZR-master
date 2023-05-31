@@ -17,14 +17,14 @@ public class TestCheckerService {
     private final FlashcardsForTestService flashcardsForTestService;
 
     public TestResult checkAndGetTestResult(long deckId, TestResultRequest testResultRequest) {
-        TestResult testResult = new TestResult();
-        testResult.setTotalQuestions(testResultRequest.getTotalQuestions());
-
-        List<UserAnswer> answers = testResultRequest.getAnswers();
+        TestResult testResult = TestResult.builder()
+                .totalQuestions(testResultRequest.getTotalQuestions())
+                .build();
 
         int rightAnswers = 0;
         int wrongAnswers = 0;
 
+        List<UserAnswer> answers = testResultRequest.getAnswers();
         for (UserAnswer userAnswer : answers) {
             Flashcard flashcard = Optional.ofNullable(flashcardsForTestService.getByFlashcardId(userAnswer.getFlashcardId()))
                     .orElseThrow(() -> new NoSuchFlashcardException(userAnswer.getFlashcardId()))
