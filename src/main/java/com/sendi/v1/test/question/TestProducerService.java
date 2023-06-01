@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Slf4j
 @Service
 public class TestProducerService {
@@ -14,6 +16,8 @@ public class TestProducerService {
     private TestRequest testRequest;
     private TestQuestions testQuestions;
     private int sizeSlicer;
+    private int totalRemainder;
+    private int remainders[];
 
     @Autowired
     public TestProducerService(FlashcardsForTestService flashcardsForTestService) {
@@ -25,6 +29,7 @@ public class TestProducerService {
         testQuestions = new TestQuestions();
 
         flashcardsForTestService.getFlashcardsByQuestionCountAndShuffle(deckId, testRequest.getQuestionCount());
+        calculateRemainders();
         generateResponse();
 
         return testQuestions;
@@ -39,9 +44,22 @@ public class TestProducerService {
         return testQuestions;
     }
 
+    private void calculateRemainders() {
+        remainders = new int[4];
+        totalRemainder = flashcardsForTestService.getActualSizeFlashcards() % getCountQuestionTypes();
+
+        int count = 0;
+        while (totalRemainder > 0) {
+            remainders[count++] = 1;
+            totalRemainder--;
+            log.info("remainders {}", remainders);
+            log.info("total remainder {}", totalRemainder);
+        }
+    }
+
     private void addTrueFalseQuestionsIfIncluded() {
         if (testRequest.isTrueFalseQuestionsIncluded()) {
-            for (int i = 0; i < sizeSlicer; i++) {
+            for (int i = 0; i < sizeSlicer  + remainders[0]; i++) {
                 addTrueFalseQuestionToTestResponse();
             }
         }
@@ -58,10 +76,8 @@ public class TestProducerService {
 
 
     private void addMultipleChoiceQuestionsIfIncluded() {
-        int remainder = flashcardsForTestService.getActualSizeFlashcards() % getCountQuestionTypes();
-
         if (testRequest.isMultipleChoiceIncluded()) {
-            for (int i = 0; i < sizeSlicer + remainder; i++) {
+            for (int i = 0; i < sizeSlicer + remainders[1]; i++) {
                 addMultipleChoiceQuestion();
             }
         }
@@ -78,7 +94,7 @@ public class TestProducerService {
 
     private void addMatchingQuestionsIfIncluded() {
         if (testRequest.isMatchingQuestionsIncluded()) {
-            for (int i = 0; i < sizeSlicer; i++) {
+            for (int i = 0; i < sizeSlicer + remainders[2]; i++) {
                 addMatchingQuestion();
             }
         }
@@ -95,7 +111,7 @@ public class TestProducerService {
 
     private void addWrittenQuestionsIfIncluded() {
         if (testRequest.isWrittenIncluded()) {
-            for (int i = 0; i < sizeSlicer; i++) {
+            for (int i = 0; i < sizeSlicer + remainders[3]; i++) {
                 addWrittenQuestion();
             }
         }
