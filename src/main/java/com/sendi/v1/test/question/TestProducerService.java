@@ -52,6 +52,7 @@ public class TestProducerService {
         while (totalRemainder > 0) {
             remainders[count++] = 1;
             totalRemainder--;
+
             log.info("remainders {}", remainders);
             log.info("total remainder {}", totalRemainder);
         }

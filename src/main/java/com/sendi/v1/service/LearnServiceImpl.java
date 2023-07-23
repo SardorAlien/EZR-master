@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class LearnServiceImpl implements LearnService {
     private final FlashcardService flashcardService;
     private final FlashcardRepository flashcardRepo;
-    private final FlashcardMapper flashcardMapper;
     private final DeckRepository deckRepo;
 
     @Transactional(readOnly = true)

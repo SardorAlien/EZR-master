@@ -21,6 +21,8 @@ spring:
 #  jackson:
 server:
   port: 8081
+
+## for experiment purposes
 origin:
   value:
     1: http://localhost:3001
