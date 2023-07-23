@@ -38,17 +38,25 @@ public class TestCheckerService {
             String actualQuestion = QuestionAnswerUtil.getQuestion(flashcard, testResultRequest.getAnswerWith());
             String actualAnswer = QuestionAnswerUtil.getAnswer(flashcard, testResultRequest.getAnswerWith());
 
+            RightOrWrongAnswer rightOrWrongAnswer = new RightOrWrongAnswer();
+            rightOrWrongAnswer.setUserAnswer(userAnswer.getAnswer());
+            rightOrWrongAnswer.setQuestion(userAnswer.getQuestion());
+            rightOrWrongAnswer.setFlashcardId(userAnswer.getFlashcardId());
+
             if (actualQuestion.equals(userAnswer.getQuestion())) {
                 if (actualAnswer.equals(userAnswer.getAnswer())) {
                     rightAnswers++;
+                    rightOrWrongAnswer.setRight(true);
                 } else {
                     wrongAnswers++;
+                    rightOrWrongAnswer.setRight(false);
                 }
             } else {
                 throw new NoSuchFlashcardQuestionWithId(userAnswer.getQuestion() + " with " + userAnswer.getFlashcardId());
             }
+            
+            testResult.getRightOrWrongAnswers().add(rightOrWrongAnswer);
         }
-        log.info("This is the number of wrong answers => {}", wrongAnswers);
 
         int percentage = (rightAnswers * 100) / testResultRequest.getTotalQuestions();
 

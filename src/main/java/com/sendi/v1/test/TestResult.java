@@ -2,6 +2,9 @@ package com.sendi.v1.test;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -13,5 +16,6 @@ public class TestResult {
     private int wrongAnswersCount;
     private int percentage;
 
-    private RightAndWrongAnswers rightAndWrongAnswers;
+    @Builder.Default
+    private List<RightOrWrongAnswer> rightOrWrongAnswers = new ArrayList<>();
 }
