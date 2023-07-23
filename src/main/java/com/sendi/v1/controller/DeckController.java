@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeckController {
     private final DeckService deckService;
-    private final TestService testService;
 
     @DeckReadPermission
     @GetMapping(value = "{userId}/all")
@@ -64,17 +63,5 @@ public class DeckController {
     @GetMapping("{deckId}")
     public ResponseEntity<DeckDTO> getDeck(@PathVariable Long deckId) {
         return ResponseEntity.ok(deckService.getOneById(deckId));
-    }
-
-    @DeckReadPermission
-    @GetMapping(value = "{deckId}/test")
-    public ResponseEntity<TestQuestions> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest) {
-        return ResponseEntity.ok(testService.getTest(deckId, testRequest));
-    }
-
-    @DeckUpdatePermission
-    @PostMapping(value = "{deckId}/test")
-    public ResponseEntity<TestResult> submitTest(@PathVariable Long deckId, @RequestBody TestResultRequest requestForTest) {
-        return ResponseEntity.ok(testService.submitTest(deckId, requestForTest));
     }
 }

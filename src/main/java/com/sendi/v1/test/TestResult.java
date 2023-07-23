@@ -12,4 +12,6 @@ public class TestResult {
     private int rightAnswersCount;
     private int wrongAnswersCount;
     private int percentage;
+
+    private RightAndWrongAnswers rightAndWrongAnswers;
 }

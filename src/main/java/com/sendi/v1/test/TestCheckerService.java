@@ -3,6 +3,7 @@ package com.sendi.v1.test;
 import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.exception.custom.MissMatchDeckAndFlashcardException;
 import com.sendi.v1.exception.custom.NoSuchFlashcardException;
+import com.sendi.v1.exception.custom.NoSuchFlashcardQuestionWithId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,10 +41,14 @@ public class TestCheckerService {
             if (actualQuestion.equals(userAnswer.getQuestion())) {
                 if (actualAnswer.equals(userAnswer.getAnswer())) {
                     rightAnswers++;
+                } else {
+                    wrongAnswers++;
                 }
-                wrongAnswers++;
+            } else {
+                throw new NoSuchFlashcardQuestionWithId(userAnswer.getQuestion() + " with " + userAnswer.getFlashcardId());
             }
         }
+        log.info("This is the number of wrong answers => {}", wrongAnswers);
 
         int percentage = (rightAnswers * 100) / testResultRequest.getTotalQuestions();
 
