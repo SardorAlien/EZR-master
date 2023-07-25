@@ -54,7 +54,7 @@ public class TestCheckerService {
             } else {
                 throw new NoSuchFlashcardQuestionWithId(userAnswer.getQuestion() + " with " + userAnswer.getFlashcardId());
             }
-            
+
             testResult.getRightOrWrongAnswers().add(rightOrWrongAnswer);
         }
 

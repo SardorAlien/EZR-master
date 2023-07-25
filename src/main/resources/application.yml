@@ -18,6 +18,9 @@ spring:
 #        generate_statistics: true ## When you want to check the performance
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  devtools:
+    restart:
+      log-condition-evaluation-delta: false
 #  jackson:
 server:
   port: 8081
@@ -27,3 +30,4 @@ origin:
   value:
     1: http://localhost:3001
 #    default-property-inclusion: non_null
+
