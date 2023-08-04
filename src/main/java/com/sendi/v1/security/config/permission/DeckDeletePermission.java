@@ -6,6 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('deck.delete')")
+@PreAuthorize("hasAuthority('deck.delete') AND @deckAuthenticationManager.idMatchesDeck(authentication, #userId)")
 public @interface DeckDeletePermission {
 }

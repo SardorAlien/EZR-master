@@ -6,6 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('flashcard.update')")
+@PreAuthorize("hasAuthority('flashcard.update') AND @flashcardAuthenticationManager.idMatchesFlashcard(authentication, #deckId)")
 public @interface FlashcardUpdatePermission {
 }

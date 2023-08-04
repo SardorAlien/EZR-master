@@ -49,16 +49,16 @@ public class FlashcardController {
     }
 
     @FlashcardDeletePermission
-    @DeleteMapping("{flashcardId}")
-    public ResponseEntity<String> deleteFlashcard(@PathVariable Long flashcardId) {
+    @DeleteMapping("{deckId}")
+    public ResponseEntity<String> deleteFlashcard(@PathVariable Long deckId, @RequestBody Long flashcardId) {
         flashcardService.deleteById(flashcardId);
 
         return ResponseEntity.ok("Deleted successfully");
     }
 
     @FlashcardReadPermission
-    @GetMapping("{flashcardId}")
-    public ResponseEntity<FlashcardDTO> getFlashcard(@PathVariable Long flashcardId) {
+    @GetMapping("{deckId}")
+    public ResponseEntity<FlashcardDTO> getFlashcard(@PathVariable Long deckId, @RequestBody Long flashcardId) {
         return ResponseEntity.ok(flashcardService.getOneById(flashcardId));
     }
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,16 +53,16 @@ public class DeckController {
     }
 
     @DeckDeletePermission
-    @DeleteMapping("{deckId}")
-    public ResponseEntity<String> deleteDeck(@PathVariable Long deckId) {
+    @DeleteMapping("{userId}")
+    public ResponseEntity<String> deleteDeck(@PathVariable Long userId, @RequestBody Long deckId) {
         deckService.deleteById(deckId);
 
         return ResponseEntity.ok("Deleted successfully");
     }
 
     @DeckReadPermission
-    @GetMapping("{deckId}")
-    public ResponseEntity<DeckDTO> getDeck(@PathVariable Long deckId) {
+    @GetMapping("{userId}")
+    public ResponseEntity<DeckDTO> getDeck(@PathVariable Long userId, @RequestBody Long deckId) {
         return ResponseEntity.ok(deckService.getOneById(deckId));
     }
 }

@@ -6,6 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('deck.create')")
+@PreAuthorize("hasAuthority('deck.create') AND @deckAuthenticationManager.idMatchesDeck(authentication, #userId)")
 public @interface DeckCreatePermission {
 }
