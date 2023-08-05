@@ -53,16 +53,16 @@ public class DeckController {
     }
 
     @DeckDeletePermission
-    @DeleteMapping("{userId}")
-    public ResponseEntity<String> deleteDeck(@PathVariable Long userId, @RequestBody Long deckId) {
+    @DeleteMapping("{userId}/{deckId}")
+    public ResponseEntity<String> deleteDeck(@PathVariable Long userId, @PathVariable Long deckId) {
         deckService.deleteById(deckId);
 
         return ResponseEntity.ok("Deleted successfully");
     }
 
     @DeckReadPermission
-    @GetMapping("{userId}")
-    public ResponseEntity<DeckDTO> getDeck(@PathVariable Long userId, @RequestBody Long deckId) {
+    @GetMapping("{userId}/{deckId}")
+    public ResponseEntity<DeckDTO> getDeck(@PathVariable Long userId, @PathVariable Long deckId) {
         return ResponseEntity.ok(deckService.getOneById(deckId));
     }
 }

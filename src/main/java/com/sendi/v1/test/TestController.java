@@ -15,14 +15,14 @@ public class TestController {
     private final TestService testService;
 
     @DeckReadPermission
-    @GetMapping(value = "/{deckId}")
-    public ResponseEntity<TestQuestions> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest) {
+    @GetMapping("{userId}/{deckId}")
+    public ResponseEntity<TestQuestions> beginTest(@PathVariable Long deckId, @RequestBody TestRequest testRequest, @PathVariable String userId) {
         return ResponseEntity.ok(testService.getTest(deckId, testRequest));
     }
 
     @DeckUpdatePermission
-    @PostMapping(value = "/{deckId}")
-    public ResponseEntity<TestResult> submitTest(@PathVariable Long deckId, @RequestBody TestResultRequest requestForTest) {
+    @PostMapping("{userId}/{deckId}")
+    public ResponseEntity<TestResult> submitTest(@PathVariable Long deckId, @RequestBody TestResultRequest requestForTest, @PathVariable String userId) {
         return ResponseEntity.ok(testService.submitTest(deckId, requestForTest));
     }
 }

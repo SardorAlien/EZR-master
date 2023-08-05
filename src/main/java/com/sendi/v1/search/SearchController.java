@@ -17,8 +17,8 @@ public class SearchController {
 
     @DeckReadPermission
     @FlashcardReadPermission
-    @GetMapping(params = "query")
-    public ResponseEntity<SearchResponse> search(@RequestParam("query") String query) {
+    @GetMapping(value = "{userId}/{deckId}", params = "query")
+    public ResponseEntity<SearchResponse> search(@RequestParam("query") String query, @PathVariable String deckId, @PathVariable String userId) {
         log.info("Request to search coming in");
         return ResponseEntity.ok(searchService.search(query));
     }

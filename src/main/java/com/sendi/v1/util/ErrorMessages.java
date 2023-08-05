@@ -22,8 +22,9 @@ public enum ErrorMessages {
 
     MISS_MATCH_DECK_FLASHCARD("Flashcard doesn't belong to the deck with deck id: "),
 
-    NO_SUCH_FLASHCARD_WITH_ID("Mismatch between the flashcardId and the question: ")
-    ;
+    NO_SUCH_FLASHCARD_WITH_ID("Mismatch between the flashcardId and the question: "),
+
+    TOO_MANY_AUTH_FAIL("Too many invalid password authentication failures with the username: ");
 
     private String message;
 

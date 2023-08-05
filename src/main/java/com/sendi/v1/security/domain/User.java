@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Setter
 @Entity(name = "users")
 @ToString
-public class User extends BaseEntity implements UserDetails, CredentialsContainer {
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -34,6 +34,16 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     private String password;
     private String firstname;
     private String lastname;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<LoginSuccess> loginSuccessSet;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<LoginFailure> loginFailureSet;
 
     @Singular
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
@@ -73,11 +83,6 @@ public class User extends BaseEntity implements UserDetails, CredentialsContaine
     @Builder.Default
     @Column(name = "enabled")
     private Boolean enabled = true;
-
-    @Override
-    public void eraseCredentials() {
-        this.password = null;
-    }
 
     @Override
     public boolean isAccountNonExpired() {
