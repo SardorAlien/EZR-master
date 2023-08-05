@@ -16,13 +16,6 @@ public class FlashcardAuthenticationManager {
     public boolean idMatchesFlashcard(Authentication authentication, Long deckId) {
         User authenticatedUser = (User) authentication.getPrincipal();
 
-//        return authenticatedUser.getDecks()
-//                .stream()
-//                .map(Deck::getFlashcards)
-//                .map(flashcards -> flashcards
-//                        .stream()
-//                        .map(flashcard -> flashcard.getDeck().getId()).anyMatch(id -> id.equals(deckId)))
-//                .findAny().get();
         return authenticatedUser.getDecks()
                 .stream()
                 .map(Deck::getFlashcards)
