@@ -6,6 +6,9 @@ import com.sendi.v1.security.auth.AuthenticationResponse;
 import com.sendi.v1.security.auth.RegisterRequest;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
+import com.sendi.v1.security.token.Token;
+import com.sendi.v1.security.token.TokenRepository;
+import com.sendi.v1.security.token.TokenType;
 import com.sendi.v1.util.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -27,6 +31,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final TokenRepository tokenRepository;
 
     private String adminPassword;
 
@@ -63,8 +68,9 @@ public class AuthenticationService {
 
         User user = userService
                 .getUser(authenticationRequest.getUsername());
-
         log.info("User in authenticate method: {}", user.toString());
+
+        revokeAllUserTokens(user);
 
         return generateTokenAndAuthResponse(user);
     }
@@ -73,12 +79,39 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(user);
 
         log.info("User in generateTokenAndAuthResponse method: {}", user.toString());
-
         log.info("JwtToken while building a response = {}", jwtToken);
+
+        saveUserToken(user, jwtToken);
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    private void revokeAllUserTokens(User user) {
+        List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+        if (validUserTokens.isEmpty()) {
+            return;
+        }
+
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+
+        tokenRepository.saveAll(validUserTokens);
+    }
+
+    private void saveUserToken(User user, String jwtToken) {
+        Token token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+
+        tokenRepository.save(token);
     }
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {

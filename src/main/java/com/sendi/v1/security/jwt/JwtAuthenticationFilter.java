@@ -2,6 +2,8 @@ package com.sendi.v1.security.jwt;
 
 import com.sendi.v1.security.service.JpaUserDetailsService;
 import com.sendi.v1.security.service.JwtService;
+import com.sendi.v1.security.token.Token;
+import com.sendi.v1.security.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -24,12 +26,13 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final JpaUserDetailsService jpaUserDetailsService;
+    private final TokenRepository tokenRepository;
 
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Override
-    protected void doFilterInternal (
+    protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
@@ -59,9 +62,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && userIsNotAuthenticated()) {
             UserDetails userDetails = this.jpaUserDetailsService.loadUserByUsername(username);
 
+            boolean isTokenValid = tokenRepository.findByToken(jwtToken)
+                    .map(t -> !t.getExpired() && !t.getRevoked())
+                    .orElse(false);
+
             log.info(String.valueOf(userDetails));
 
-            if (jwtService.isTokenValid(jwtToken, userDetails)) {
+            if (jwtService.isTokenValid(jwtToken, userDetails) && isTokenValid) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

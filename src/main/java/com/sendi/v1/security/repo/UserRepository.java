@@ -18,8 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Boolean existsByUsername(String username);
 
     List<User> findAllByAccountNonLockedAndLastModifiedTimeIsBefore(Boolean locked, LocalDate localDate);
-
-
+    
     interface Specs {
         static Specification<User> byUsername(String username) {
             return (root, query, builder) ->

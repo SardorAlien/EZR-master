@@ -3,6 +3,7 @@ package com.sendi.v1.security.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sendi.v1.domain.BaseEntity;
 import com.sendi.v1.domain.Deck;
+import com.sendi.v1.security.token.Token;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.CredentialsContainer;
@@ -12,17 +13,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 
+@Entity(name = "users")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Entity(name = "users")
 @ToString
 public class User extends BaseEntity implements UserDetails {
 
@@ -53,6 +55,9 @@ public class User extends BaseEntity implements UserDetails {
     @ToString.Exclude
     @JsonManagedReference
     private Set<Role> roles;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Token> tokens;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     @ToString.Exclude
