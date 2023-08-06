@@ -64,6 +64,8 @@ public class SecurityConfig {
                         .logoutSuccessHandler(
                                 (request, response, authentication) ->
                                         SecurityContextHolder.clearContext()))
+                .headers()
+                .xssProtection(xXssConfig -> xXssConfig.and().contentSecurityPolicy("script-src 'self'; form-action 'self'"))
         ;
 
         //httpSecurity.headers().frameOptions().sameOrigin(); // for h2 database to function normally
