@@ -51,6 +51,10 @@ public class SecurityConfig {
                         .antMatchers("/api/v1/demo-controller/**").permitAll()
                         .antMatchers("/api/v1/auth/**").permitAll()
                         .anyRequest().authenticated())
+                .requiresChannel(channelRequestMatcherRegistry ->
+                        channelRequestMatcherRegistry
+                                .antMatchers("/api/v1/**")
+                                .requiresSecure())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider())
