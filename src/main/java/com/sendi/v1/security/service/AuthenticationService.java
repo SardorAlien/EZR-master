@@ -1,25 +1,32 @@
 package com.sendi.v1.security.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendi.v1.exception.custom.UserDuplicationException;
 import com.sendi.v1.security.auth.AuthenticationRequest;
 import com.sendi.v1.security.auth.AuthenticationResponse;
 import com.sendi.v1.security.auth.RegisterRequest;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
+import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.security.token.Token;
 import com.sendi.v1.security.token.TokenRepository;
 import com.sendi.v1.security.token.TokenType;
 import com.sendi.v1.util.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +39,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     private String adminPassword;
+
+    private static final String TOKEN_PREFIX = "Bearer ";
 
     public AuthenticationResponse register(RegisterRequest registerRequest) throws Exception {
         Role role = promoteAdminIfFirst();
@@ -83,8 +93,10 @@ public class AuthenticationService {
 
         saveUserToken(user, jwtToken);
 
+        String refreshJwtToken = jwtService.generateRefreshToken(user);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(refreshJwtToken)
                 .build();
     }
 
@@ -114,7 +126,43 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String username;
+
+        log.info("This is authHeader {}", authHeader);
+
+        if (authHeader == null || !authHeader.startsWith(TOKEN_PREFIX)) {
+            return;
+        }
+
+        refreshToken = authHeader.split(" ")[1].trim();
+
+        log.info("This is jwtToken extracted from user claims = {} ", refreshToken);
+
+        username = jwtService.extractUsername(refreshToken);
+
+        log.info("username = {} ", username);
+
+        if (username != null) {
+//            User user = this.userService.getUser(username);
+            User user = this.userRepository.findByUsername(username)
+                    .orElseThrow();
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                String accessToken = jwtService.generateToken(user);
+
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+
+                AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+
+                new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
+            }
+        }
 
     }
 }

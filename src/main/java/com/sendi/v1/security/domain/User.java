@@ -56,7 +56,9 @@ public class User extends BaseEntity implements UserDetails {
     @JsonManagedReference
     private Set<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonManagedReference
     private List<Token> tokens;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)

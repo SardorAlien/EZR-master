@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -36,9 +37,8 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
 
-    //todo create a method to refresh token
-    @PostMapping("refreshToken")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping(value = "refresh-token", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authenticationService.refreshToken(request, response);
     }
 

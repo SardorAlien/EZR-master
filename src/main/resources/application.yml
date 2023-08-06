@@ -31,3 +31,11 @@ origin:
     1: http://localhost:3001
 #    default-property-inclusion: non_null
 
+application:
+  security:
+    jwt:
+      secret-key: 50645367566B59703373367638792F423F4528482B4D6251655468576D5A7134
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days
+

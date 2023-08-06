@@ -1,6 +1,7 @@
 package com.sendi.v1.security.token;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sendi.v1.domain.BaseEntity;
 import com.sendi.v1.security.domain.User;
 import lombok.*;
@@ -18,14 +19,14 @@ public class Token extends BaseEntity {
     private String token;
 
     @Enumerated(EnumType.STRING)
-    private TokenType tokenType;
+    private TokenType tokenType = TokenType.BEARER;
 
     private Boolean expired;
 
     private Boolean revoked;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 }
