@@ -48,13 +48,14 @@ public class SecurityConfig {
                 .cors().configurationSource(corsConfiguration())
                 .and()
                 .authorizeRequests(authorize -> authorize
-                        .antMatchers("/api/v1/demo-controller/**").permitAll()
+//                        .antMatchers("/api/v1/demo-controller/**").permitAll()
                         .antMatchers("/api/v1/auth/**").permitAll()
+//                        .antMatchers("/api/v1/mail/sendi").permitAll()
                         .anyRequest().authenticated())
-                .requiresChannel(channelRequestMatcherRegistry ->
-                        channelRequestMatcherRegistry
-                                .antMatchers("/api/v1/**")
-                                .requiresSecure())
+//                .requiresChannel(channelRequestMatcherRegistry ->
+//                        channelRequestMatcherRegistry
+//                                .antMatchers("/api/v1/**")
+//                                .requiresSecure())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider())

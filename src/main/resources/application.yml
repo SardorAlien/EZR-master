@@ -21,7 +21,18 @@ spring:
   devtools:
     restart:
       log-condition-evaluation-delta: false
-#  jackson:
+  mail:
+    host: smtp.gmail.com
+    username: sardoralien@gmail.com
+    password: hmvnvqpooqbtommt
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
 server:
   port: 8081
 
