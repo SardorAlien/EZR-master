@@ -33,12 +33,26 @@ public class DeckController {
     @DeckReadPermission
     @GetMapping(value = "{userId}/all", name = "getAllDecksWithPagination", params = {"page", "size"})
     public ResponseEntity<List<DeckDTO>> getAllDecksByUserId(@RequestParam("page") int page,
-                                                     @RequestParam("size") int size,
-                                                     @PathVariable Long userId) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+                                                             @RequestParam("size") int size,
+                                                             @PathVariable Long userId) {
 
-        return ResponseEntity.ok(deckService.getDecksByUserId(userId, pageRequest));
+        return ResponseEntity.ok(deckService.getDecksByUserId(userId, page, size));
     }
+
+    @DeckReadPermission
+    @GetMapping(value = "{userId}/all/brief")
+    public ResponseEntity<List<DeckDTO>> getAllDeckInfoWithoutFlashcards(@PathVariable Long userId) {
+        return ResponseEntity.ok(deckService.getDecksInfoByUserId(userId));
+    }
+
+    @DeckReadPermission
+    @GetMapping(value = "{userId}/all/brief", name = "getAllDecksWithoutFlashcards", params = {"page", "size"})
+    public ResponseEntity<List<DeckDTO>> getAllDeckInfoWithoutFlashcards(@RequestParam("page") int page,
+                                                                         @RequestParam("size") int size,
+                                                                         @PathVariable Long userId) {
+        return ResponseEntity.ok(deckService.getDecksInfoByUserId(userId, page, size));
+    }
+
 
     @DeckCreatePermission
     @PostMapping("{userId}")
@@ -64,5 +78,11 @@ public class DeckController {
     @GetMapping("{userId}/{deckId}")
     public ResponseEntity<DeckDTO> getDeck(@PathVariable Long userId, @PathVariable Long deckId) {
         return ResponseEntity.ok(deckService.getOneById(deckId));
+    }
+
+    @DeckReadPermission
+    @GetMapping("{userId}/only/{deckId}")
+    public ResponseEntity<DeckDTO> getDeckWithoutFlashcards(@PathVariable Long userId, @PathVariable Long deckId) {
+        return ResponseEntity.ok(deckService.getOneByIdWithoutFlashcards(deckId));
     }
 }

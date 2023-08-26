@@ -4,6 +4,7 @@ import com.sendi.v1.security.config.permission.DeckReadPermission;
 import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.model.FlashcardDTO;
 import com.sendi.v1.service.LearnService;
+import com.sendi.v1.service.model.FlashcardImageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class LearnController {
 
     @DeckReadPermission
     @GetMapping("{userId}/{deckId}/session")
-    public ResponseEntity<List<FlashcardDTO>> beginLearningSession(@PathVariable Long deckId, @PathVariable String userId) {
+    public ResponseEntity<List<FlashcardImageDTO>> beginLearningSession(@PathVariable Long deckId, @PathVariable String userId) {
         return ResponseEntity.ok(learnService.beginLearningSession(deckId));
     }
 

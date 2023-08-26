@@ -3,9 +3,9 @@ package com.sendi.v1.service;
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.service.model.FlashcardDTO;
-import com.sendi.v1.service.model.mapper.FlashcardMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
+import com.sendi.v1.service.model.FlashcardImageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ public class LearnServiceImpl implements LearnService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<FlashcardDTO> beginLearningSession(Long deckId) {
+    public List<FlashcardImageDTO> beginLearningSession(Long deckId) {
         if (isDeckFinished(deckId)) {
             return getAllFlashcards(deckId);
         }
@@ -31,19 +31,19 @@ public class LearnServiceImpl implements LearnService {
         return getNotLearnedFlashcards(deckId);
     }
 
-    private List<FlashcardDTO> getAllFlashcards(Long deckId) {
-        List<FlashcardDTO> flashcardDTOs = flashcardService.getFlashcardsByDeckId(deckId);
+    private List<FlashcardImageDTO> getAllFlashcards(Long deckId) {
+        List<FlashcardImageDTO> flashcardDTOS = flashcardService.getFlashcardsByDeckId (deckId);
 
-        return flashcardDTOs;
+        return flashcardDTOS;
     }
 
-    private List<FlashcardDTO> getNotLearnedFlashcards(Long deckId) {
-        List<FlashcardDTO> flashcardDTOs = flashcardService.getFlashcardsByDeckId(deckId)
+    private List<FlashcardImageDTO> getNotLearnedFlashcards(Long deckId) {
+        List<FlashcardImageDTO> flashcardDTOS = flashcardService.getFlashcardsByDeckId(deckId)
                 .stream()
-                .filter(t -> !t.isLearned())
+                .filter(t -> !t.getFlashcardDTO().isLearned())
                 .collect(Collectors.toList());
 
-        return flashcardDTOs;
+        return flashcardDTOS;
     }
 
     private boolean isDeckFinished(Long deckId) {

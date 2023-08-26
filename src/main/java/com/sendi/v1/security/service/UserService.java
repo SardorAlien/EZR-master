@@ -22,4 +22,5 @@ public interface UserService {
     long count();
 
     boolean existsByUsername(String username);
+
 }

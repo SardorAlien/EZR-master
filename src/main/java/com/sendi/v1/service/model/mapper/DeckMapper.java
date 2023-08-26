@@ -10,9 +10,9 @@ import org.mapstruct.factory.Mappers;
 public interface DeckMapper {
     DeckMapper INSTANCE = Mappers.getMapper(DeckMapper.class);
 
-    @Mapping(source = "flashcardDTOs", target = "flashcards")
+    @Mapping(source = "flashcardDTOS", target = "flashcards")
     Deck toEntity(DeckDTO deckDTO);
 
-    @Mapping(source = "flashcards", target = "flashcardDTOs")
+    @Mapping(source = "flashcards", target = "flashcardDTOS")
     DeckDTO toDTO(Deck deck);
 }

@@ -9,17 +9,21 @@ import java.util.List;
 public interface DeckService {
     DeckDTO getOneById(Long id);
 
-    List<DeckDTO> getDecksByUser(User user);
+    DeckDTO getOneByIdWithoutFlashcards(Long id);
 
-    List<DeckDTO> getDecksByUser(User user, Pageable pageable);
-
-    List<DeckDTO> getDecksByUser(User user, int page, int size);
+//    List<DeckDTO> getDecksByUser(User user);
+//
+//    List<DeckDTO> getDecksByUser(User user, Pageable pageable);
+//
+//    List<DeckDTO> getDecksByUser(User user, int page, int size);
 
     List<DeckDTO> getDecksByUserId(Long userId);
 
-    List<DeckDTO> getDecksByUserId(Long userId, Pageable pageable);
-
     List<DeckDTO> getDecksByUserId(Long userId, int page, int size);
+
+    List<DeckDTO> getDecksInfoByUserId(Long userId);
+
+    List<DeckDTO> getDecksInfoByUserId(Long userId, int page, int size);
 
     DeckDTO createOrUpdate(Long userId, DeckDTO deckDTO);
 

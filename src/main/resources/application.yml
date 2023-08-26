@@ -5,6 +5,7 @@ spring:
     password: 5938240s
     driver-class-name: org.postgresql.Driver
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
       use-new-id-generator-mappings: false
@@ -33,6 +34,26 @@ spring:
             enable: true
             required: true
           auth: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: EZR
+            client-id: 1034014846586-4bdlj5ir70aeec6joimp9at78h2669h4.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - user
+              - email
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 20MB
+      max-request-size: 20MB
 server:
   port: 8081
 
@@ -49,4 +70,6 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+
+
 

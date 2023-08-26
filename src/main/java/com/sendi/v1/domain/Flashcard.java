@@ -1,11 +1,13 @@
 package com.sendi.v1.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,6 +22,9 @@ public class Flashcard extends BaseEntity {
 
     @Column(name = "definition")
     private String definition;
+
+    @OneToOne(mappedBy = "flashcard", cascade = CascadeType.ALL)
+    private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude

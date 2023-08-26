@@ -22,7 +22,7 @@ public class UserUnlockService {
 
         List<User> lockedUsers = userRepository
                 .findAllByAccountNonLockedAndLastModifiedTimeIsBefore(false,
-                        LocalDate.now().minusDays(1));
+                        LocalDate.now().minusDays(1L));
 
         if (lockedUsers.size() > 0) {
             log.info("Locked users found, unlocking : ");

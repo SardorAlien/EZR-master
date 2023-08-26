@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,14 +22,13 @@ import java.util.Set;
 @Entity(name = "decks")
 @EntityListeners(AuditingEntityListener.class)
 public class Deck extends BaseEntity {
-
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deck", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deck", fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonManagedReference
     private Set<Flashcard> flashcards;
@@ -43,6 +41,9 @@ public class Deck extends BaseEntity {
     @LastModifiedDate
     @Column(name = "last_visited_at")
     private LocalDateTime lastVisitedAt;
+
+    @Column(name = "completion_percentage")
+    private Integer completionPercentage = 0;
 
     @Override
     public boolean equals(Object o) {

@@ -19,7 +19,6 @@ import java.util.Objects;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity implements Serializable {
-
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +26,7 @@ public class BaseEntity implements Serializable {
     
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "last_modified_time", nullable = false)

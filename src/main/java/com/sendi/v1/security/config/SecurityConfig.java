@@ -2,6 +2,7 @@ package com.sendi.v1.security.config;
 
 import com.sendi.v1.security.jwt.JwtAuthenticationFilter;
 import com.sendi.v1.security.service.JpaUserDetailsService;
+import com.sendi.v1.service.model.FlashcardDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -44,13 +45,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf(http -> http.ignoringAntMatchers("/api/**"))
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors().configurationSource(corsConfiguration())
                 .and()
                 .authorizeRequests(authorize -> authorize
-//                        .antMatchers("/api/v1/demo-controller/**").permitAll()
-                        .antMatchers("/api/v1/auth/**").permitAll()
-//                        .antMatchers("/api/v1/mail/sendi").permitAll()
+                        .antMatchers("/api/v1/auth/**", "/api/v1/oauth/**").permitAll()
                         .anyRequest().authenticated())
 //                .requiresChannel(channelRequestMatcherRegistry ->
 //                        channelRequestMatcherRegistry

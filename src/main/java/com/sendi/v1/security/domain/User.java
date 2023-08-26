@@ -3,6 +3,7 @@ package com.sendi.v1.security.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sendi.v1.domain.BaseEntity;
 import com.sendi.v1.domain.Deck;
+import com.sendi.v1.domain.Image;
 import com.sendi.v1.security.token.Token;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 @Setter
 @ToString
 public class User extends BaseEntity implements UserDetails {
-
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
@@ -56,15 +56,18 @@ public class User extends BaseEntity implements UserDetails {
     @JsonManagedReference
     private Set<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @ToString.Exclude
     @JsonManagedReference
     private List<Token> tokens;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @ToString.Exclude
     @JsonManagedReference
     private Set<Deck> decks;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Image image;
 
     @Transient
     public Set<GrantedAuthority> getAuthorities() {

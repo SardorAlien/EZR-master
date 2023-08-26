@@ -65,7 +65,7 @@ class DeckControllerTest {
         deckDTO.setId(1L);
         deckDTO.setName("deck1");
         deckDTO.setDescription("desc1");
-        deckDTO.setFlashcardDTOs(Set.of(new FlashcardDTO(), new FlashcardDTO()));
+        deckDTO.setFlashcardDTOS(Set.of(new FlashcardDTO(), new FlashcardDTO()));
     }
 
     @WithMockUser(authorities = "deck.read")

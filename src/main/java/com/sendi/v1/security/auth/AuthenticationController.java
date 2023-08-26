@@ -37,7 +37,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
 
-    @PostMapping(value = "refresh-token", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/refresh-token", produces = MediaType.APPLICATION_JSON_VALUE)
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authenticationService.refreshToken(request, response);
     }

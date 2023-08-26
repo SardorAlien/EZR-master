@@ -68,8 +68,8 @@ class FlashcardControllerTest {
     @WithMockUser(authorities = "flashcard.read")
     @Test
     void getAllFlashcards() throws Exception {
-        when(flashcardService.getFlashcardsByDeckId(anyLong()))
-                .thenReturn(List.of(flashcardDTO, flashcardDTO));
+//        when(flashcardService.getFlashcardsByDeckId(anyLong()))
+//                .thenReturn(List.of(flashcardDTO, flashcardDTO));
 
         ResultActions response = mockMvc.perform(get(BASE_URL_FLASHCARDS + "/{deckId}/all", 2L)
                 .contentType(MediaType.APPLICATION_JSON));
