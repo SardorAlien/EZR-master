@@ -53,29 +53,6 @@ class DeckRepositoryTest {
     }
 
     @Test
-    void findAllByUser() {
-        userRepository.save(user);
-        deckRepository.saveAll(List.of(deck1, deck2));
-
-        List<Deck> actualDecks = deckRepository.findAllByUser(user);
-
-        assertThat(actualDecks).hasSize(2);
-        assertThat(actualDecks.get(0).getName()).isEqualTo(deck1.getName());
-    }
-
-    @Test
-    void findAllByUserPageable() {
-        userRepository.save(user);
-        deckRepository.saveAll(List.of(deck1, deck2));
-
-        PageRequest pageRequest = PageRequest.of(1, 1);
-        List<Deck> actualDecks = deckRepository.findAllByUser(user, pageRequest);
-
-        assertThat(actualDecks).hasSize(1);
-        assertThat(actualDecks.get(0).getName()).isEqualTo(deck2.getName());
-    }
-
-    @Test
     void existsById() {
         userRepository.save(user);
         deckRepository.save(deck1);

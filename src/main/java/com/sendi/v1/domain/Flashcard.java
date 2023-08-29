@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 @Entity(name = "flashcards")
-public class Flashcard extends BaseEntity {
+public class Flashcard extends BaseEntity implements Serializable {
 
     @Column(name = "term", nullable = false)
     private String term;

@@ -63,31 +63,21 @@ class DeckServiceImplTest {
         return List.of(deck1, deck2);
     }
 
-    @Test
-    void getDecksByUserExists() {
-        when(deckRepository.findAllByUser(userCaptor.capture())).thenAnswer(new FindDecks());
-
-        User actualUser = User.builder()
-                .firstname("Harry")
-                .lastname("Potter")
-                .build();
-
-        List<DeckDTO> actualDecks = service.getDecksByUser(actualUser);
-
-        assertThat(userCaptor.getValue()).isNotNull();
-        assertThat(actualDecks).hasSize(2);
-    }
-
-    @Test
-    void getDecksByUserEmptyList() {
-        lenient().when(deckRepository.findAllByUser(any(User.class))).thenAnswer(new FindDecks());
-
-        User user = null;
-        List<DeckDTO> decks = service.getDecksByUser(user);
-
-        assertThat(decks).isEmpty();
-        verify(deckRepository, never()).findAllByUser(any(User.class));
-    }
+//    @Test
+//    void getDecksByUserExists() {
+//        when(deckRepository.findAllByUser(userCaptor.capture())).thenAnswer(new FindDecks());
+//
+//        User actualUser = User.builder()
+//                .firstname("Harry")
+//                .lastname("Potter")
+//                .build();
+//
+//        List<DeckDTO> actualDecks = service.getDecksByUser(actualUser);
+//
+//        assertThat(userCaptor.getValue()).isNotNull();
+//        assertThat(actualDecks).hasSize(2);
+//    }
+//
 
     @Test
     void getDecksByUserId() {
@@ -98,14 +88,14 @@ class DeckServiceImplTest {
         expectedUser.setId(1L);
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(expectedUser));
-        when(deckRepository.findAllByUser(any(User.class))).thenAnswer(new FindDecks());
+//        when(deckRepository.findAllByUser(any(User.class))).thenAnswer(new FindDecks());
 
         List<DeckDTO> actualDecks = service.getDecksByUserId(getRandomLong());
 
         assertThat(actualDecks).hasSize(2);
 
         verify(userRepository).findById(anyLong());
-        verify(deckRepository).findAllByUser(any(User.class));
+//        verify(deckRepository).findAllByUser(any(User.class));
     }
 
     @Test

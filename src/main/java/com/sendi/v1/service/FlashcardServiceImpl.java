@@ -5,6 +5,8 @@ import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.domain.Image;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.repo.ImageRepository;
+import com.sendi.v1.security.domain.User;
+import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.service.model.DeckDTO;
 import com.sendi.v1.service.model.FlashcardDTO;
 import com.sendi.v1.service.model.FlashcardDTORepresentable;
@@ -20,18 +22,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FlashcardServiceImpl implements FlashcardService {
+    private final UserRepository userRepository;
     private final FlashcardRepository flashcardRepo;
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
@@ -88,10 +92,6 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Transactional(readOnly = true)
     @Override
     public List<FlashcardImageDTO> getFlashcardsByDeckId(Long deckId, Pageable pageable) {
-        if (!deckRepo.existsById(deckId)) {
-            throw new NoSuchDeckException(deckId);
-        }
-
         List<FlashcardImageDTO> flashcardDTOList = flashcardRepo.findAllByDeckId(deckId)
                 .stream()
                 .map(flashcard -> {
@@ -119,43 +119,85 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    @Transactional
-    public FlashcardImageDTO createOrUpdate(Long deckId,
-                                            FlashcardDTO flashcardDTO,
-                                            MultipartFile img
+    public Object createOrUpdate(Long deckId, List<FlashcardDTO> flashcardDTOList, HttpServletRequest httpServletRequest) throws IOException {
+        if (httpServletRequest instanceof MultipartHttpServletRequest) {
+            Map<String, MultipartFile> multipartFileMap = ((MultipartHttpServletRequest) httpServletRequest).getFileMap();
+
+            Map<FlashcardDTO, MultipartFile> flashcardDTOMultipartFileMap = flashcardDTOList.stream()
+                    .collect(Collectors.toMap(Function.identity(),
+                            flashcardDTO -> multipartFileMap.get(String.valueOf(flashcardDTO.getOrderId()))));
+            log.info("flashcardDTOMultipartFileMap => {}", flashcardDTOMultipartFileMap);
+            return createOrUpdate(deckId, flashcardDTOMultipartFileMap);
+        }
+
+        return createOrUpdate(deckId, flashcardDTOList);
+    }
+
+    private List<FlashcardImageDTO> createOrUpdate(Long deckId,
+                                                   Map<FlashcardDTO, MultipartFile> flashcardDTOMultipartFileMap
     ) throws IOException {
-        Deck deck = Optional.ofNullable(deckRepo.findById(deckId))
+        Deck deck = Optional.of(deckRepo.findById(deckId))
                 .orElseThrow(() -> new NoSuchDeckException(deckId))
                 .get();
 
-        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
-        flashcard.setDeck(deck);
-        Image image = Image.builder()
-                .data(img.getBytes())
-                .size(img.getSize())
-                .name(img.getOriginalFilename())
-                .flashcard(flashcard)
-                .contentType(img.getContentType())
-                .build();
-        imageRepository.save(image);
-        flashcardRepo.save(flashcard);
+        Map<Flashcard, Image> flashcardImageMap = flashcardDTOMultipartFileMap.keySet().stream()
+                .collect(Collectors.toMap(flashcardDTO -> {
+                    try {
+                        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
+                        flashcard.setDeck(deck);
+                        return flashcard;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, flashcardDTO -> {
+                    try {
+                        MultipartFile multipartFile = flashcardDTOMultipartFileMap.get(flashcardDTO);
+                        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
+                        flashcard.setDeck(deck);
 
-        FlashcardImageDTO flashcardImageDTO = new FlashcardImageDTO(flashcardDTO, img.getBytes());
-        return flashcardImageDTO;
+                        Image image = Image.builder()
+                                .data(multipartFile.getBytes())
+                                .size(multipartFile.getSize())
+                                .name(multipartFile.getOriginalFilename())
+                                .flashcard(flashcard)
+                                .contentType(multipartFile.getContentType())
+                                .build();
+                        return image;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
+
+        flashcardRepo.saveAll(flashcardImageMap.keySet());
+        List<Image> savedImages = imageRepository.saveAll(flashcardImageMap.values());
+        List<FlashcardImageDTO> flashcardImageDTOList = savedImages.stream()
+                .map(image -> new FlashcardImageDTO(flashcardMapper.toDTO(image.getFlashcard()), image.getData())
+                )
+                .collect(Collectors.toList());
+        return flashcardImageDTOList;
     }
 
     @Override
-    public FlashcardDTO createOrUpdate(Long deckId, FlashcardDTO flashcardDTO) throws IOException {
-        Deck deck = Optional.ofNullable(deckRepo.findById(deckId))
+    public List<FlashcardDTO> createOrUpdate(Long deckId, List<FlashcardDTO> flashcardDTOs) throws IOException {
+        Deck deck = Optional.of(deckRepo.findById(deckId))
                 .orElseThrow(() -> new NoSuchDeckException(deckId))
                 .get();
 
-        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
-        flashcard.setDeck(deck);
-        flashcardRepo.save(flashcard);
+        List<Flashcard> flashcards = flashcardDTOs.stream()
+                .map(flashcardDTO -> {
+                    try {
+                        Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
+                        flashcard.setDeck(deck);
+                        return flashcard;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
 
-        FlashcardDTO savedFlashcardDTO = flashcardMapper.toDTO(flashcard);
-        return savedFlashcardDTO;
+        flashcardRepo.saveAll(flashcards);
+
+        return flashcardDTOs;
     }
 
     @Transactional

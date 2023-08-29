@@ -24,11 +24,11 @@ public class Image extends BaseEntity implements Serializable {
     @Lob
     private byte[] data;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @ToString.Exclude
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Flashcard flashcard;
 }

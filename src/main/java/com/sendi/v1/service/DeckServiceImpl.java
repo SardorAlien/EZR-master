@@ -4,6 +4,7 @@ import com.sendi.v1.domain.Deck;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.service.model.DeckDTO;
+import com.sendi.v1.service.model.FlashcardDTO;
 import com.sendi.v1.service.model.mapper.DeckMapper;
 import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.security.domain.User;
@@ -16,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaUpdate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,55 +33,16 @@ public class DeckServiceImpl implements DeckService {
     private final DeckMapper deckMapper;
     private final UserRepository userRepo;
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<DeckDTO> getDecksByUser(User user) {
-//        return getDecksByUser(user, Pageable.unpaged());
-//    }
-//
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<DeckDTO> getDecksByUser(User user, Pageable pageable) {
-//        if (user == null) {
-//            return Collections.emptyList();
-//        }
-//
-//        if (pageable.isUnpaged()) {
-//            return deckRepo.findAllByUser(user)
-//                    .stream()
-//                    .map(deckMapper::toDTO)
-//                    .collect(Collectors.toList());
-//        }
-//
-//        List<DeckDTO> deckDTOs = deckRepo.findAllByUser(user, pageable)
-//                .stream()
-//                .map(deckMapper::toDTO)
-//                .collect(Collectors.toList());
-//
-//        log.info("This is deckDTOList {}", deckDTOs);
-//
-//        return deckDTOs;
-//    }
-//
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<DeckDTO> getDecksByUser(User user, int page, int size) {
-//        if (page < 0) {
-//            return Collections.emptyList();
-//        }
-//
-//        PageRequest pageRequest = PageRequest.of(page, size);
-//        return getDecksByUser(user, pageRequest);
-//    }
-
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<DeckDTO> getDecksByUserId(Long userId) {
         return getDecksByUserId(userId, Pageable.unpaged());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<DeckDTO> getDecksByUserId(Long userId, Pageable pageable) {
+        updateCompletionPercentageByUserId(userId);
+
         List<DeckDTO> deckDTOList = deckRepo.findAllByUserId(userId, pageable)
                 .stream()
                 .map(deckMapper::toDTO)
@@ -87,44 +52,57 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<DeckDTO> getDecksByUserId(Long userId, int page, int size) {
         return getDecksByUserId(userId, PageRequest.of(page, size));
     }
 
     @Override
+    @Transactional
     public List<DeckDTO> getDecksInfoByUserId(Long userId) {
         return getDecksInfoByUserId(userId, Pageable.unpaged());
     }
 
-
+    @Transactional
     public List<DeckDTO> getDecksInfoByUserId(Long userId, Pageable pageable) {
-        Page<DeckDTO> deckDTOList = deckRepo.findAllDecksWithoutFlashcardsByUserId(userId, pageable);
+        updateCompletionPercentageByUserId(userId);
 
-        return deckDTOList.toList();
+        Page<DeckDTO> deckDTOPage = deckRepo.findAllDecksWithoutFlashcardsByUserId(userId, pageable);
+
+        List<DeckDTO> deckDTOList = deckDTOPage.toList();
+
+
+        return deckDTOList;
     }
 
     @Override
+    @Transactional
     public List<DeckDTO> getDecksInfoByUserId(Long userId, int page, int size) {
         return getDecksInfoByUserId(userId, PageRequest.of(page, size));
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public DeckDTO getOneById(Long id) {
-        Deck deck = Optional.ofNullable(deckRepo.findById(id))
-                .orElseThrow(() -> new NoSuchDeckException(id))
-                .get();
+    @Transactional
+    public DeckDTO getOneById(Long deckId) {
+        updateCompletionPercentageByDeckId(deckId);
 
-        DeckDTO newDeckDTO = deckMapper.toDTO(deck);
+        DeckDTO deckDTO = Optional.ofNullable(deckRepo.findById(deckId))
+                .orElseThrow(() -> new NoSuchDeckException(deckId)).map(deckMapper::toDTO).
+                get();
 
-        return newDeckDTO;
+
+        return deckDTO;
     }
 
     @Override
-    public DeckDTO getOneByIdWithoutFlashcards(Long id) {
-        DeckDTO deckDTO = Optional.ofNullable(deckRepo.findDeckByIdWithoutFlashcards(id))
-                .orElseThrow(() -> new NoSuchDeckException(id));
+    @Transactional
+    public DeckDTO getOneByIdWithoutFlashcards(Long deckId) {
+        updateCompletionPercentageByDeckId(deckId);
+
+        DeckDTO deckDTO = Optional.ofNullable(deckRepo.findDeckByIdWithoutFlashcards(deckId))
+                .orElseThrow(() -> new NoSuchDeckException(deckId));
+
+
         return deckDTO;
     }
 
@@ -154,5 +132,15 @@ public class DeckServiceImpl implements DeckService {
     @Override
     public boolean existsById(Long deckId) {
         return deckRepo.existsById(deckId);
+    }
+
+    @Transactional
+    public void updateCompletionPercentageByUserId(Long userId) {
+        deckRepo.updateCompletionPercentageByUserId(userId);
+    }
+
+    @Transactional
+    public void updateCompletionPercentageByDeckId(Long deckId) {
+        deckRepo.updateCompletionPercentageByDeckId(deckId);
     }
 }

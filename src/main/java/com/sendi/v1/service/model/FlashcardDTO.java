@@ -10,10 +10,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
 public class FlashcardDTO implements FlashcardDTORepresentable {
     private Long id;
     private String term;
     private String definition;
     private boolean isLearned;
     private LocalDateTime createdAt;
+    private Long orderId;
 }
