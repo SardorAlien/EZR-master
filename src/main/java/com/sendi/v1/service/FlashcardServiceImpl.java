@@ -17,6 +17,10 @@ import com.sendi.v1.repo.DeckRepository;
 import com.sendi.v1.repo.FlashcardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +29,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,7 +42,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Slf4j
 public class FlashcardServiceImpl implements FlashcardService {
-    private final UserRepository userRepository;
     private final FlashcardRepository flashcardRepo;
     private final DeckMapper deckMapper;
     private final FlashcardMapper flashcardMapper;
@@ -197,7 +203,66 @@ public class FlashcardServiceImpl implements FlashcardService {
 
         flashcardRepo.saveAll(flashcards);
 
-        return flashcardDTOs;
+        List<FlashcardDTO> flashcardDTOList = flashcards
+                .stream()
+                .map(flashcardMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return flashcardDTOList;
+    }
+
+    @Override
+    public List<FlashcardDTO> createOrUpdate(Long deckId, MultipartFile multipartFile) throws IOException {
+        File excFile = new File(System.getProperty("java.io.tmpdir") + "/" + multipartFile.getOriginalFilename());
+        multipartFile.transferTo(excFile);
+        FileInputStream fileInputStream = new FileInputStream(excFile);
+        Workbook workbook = null;
+
+        List<FlashcardDTO> flashcardDTOList = new ArrayList<>();
+
+        if (excFile.getName().toLowerCase().endsWith("xlsx")) {
+            workbook = new XSSFWorkbook(fileInputStream);
+        } else if (excFile.getName().toLowerCase().endsWith("xls")) {
+            workbook = new HSSFWorkbook(fileInputStream);
+        }
+
+        int numberOfSheets = Objects.requireNonNull(workbook).getNumberOfSheets();
+
+        for (int i = 0; i < numberOfSheets; i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+
+            Iterator<Row> rowIterator = sheet.rowIterator();
+
+            while (rowIterator.hasNext()) {
+                String term = "";
+                String definition = "";
+
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+
+                    if (Objects.requireNonNull(cell.getCellType()) == CellType.STRING) {
+                        if (term.equalsIgnoreCase("")) {
+                            term = cell.getStringCellValue().trim();
+                        } else if (definition.equalsIgnoreCase("")) {
+                            definition = cell.getStringCellValue().trim();
+                        }
+                    }
+                }
+                FlashcardDTO flashcardDTO = FlashcardDTO.builder()
+                        .term(term)
+                        .definition(definition)
+                        .build();
+
+                flashcardDTOList.add(flashcardDTO);
+            }
+
+            fileInputStream.close();
+        }
+
+        return createOrUpdate(deckId, flashcardDTOList);
     }
 
     @Transactional

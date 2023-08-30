@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import java.time.LocalDateTime;
 
+@Builder
 @Setter
 @Getter
 @AllArgsConstructor

@@ -6,6 +6,7 @@ import com.sendi.v1.service.model.FlashcardDTORepresentable;
 import com.sendi.v1.service.model.FlashcardImageDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -23,11 +24,11 @@ public interface FlashcardService {
 
     List<FlashcardImageDTO> getFlashcardsByDeckId(Long deckId, int page, int size);
 
-//    List<FlashcardImageDTO> createOrUpdate(Long deckId, Map<FlashcardDTO, MultipartFile> flashcardDTOMultipartFileMap) throws IOException;
-
     List<FlashcardDTO> createOrUpdate(Long deckId, List<FlashcardDTO> flashcardDTO) throws IOException;
 
     Object createOrUpdate(Long deckId, List<FlashcardDTO> flashcardDTOList, HttpServletRequest httpServletRequest) throws IOException;
+
+    List<FlashcardDTO> createOrUpdate(Long deckId, MultipartFile multipartFile) throws IOException;
 
     void deleteById(Long flashcardId);
 }

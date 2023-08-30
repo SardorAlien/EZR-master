@@ -14,8 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -42,14 +43,6 @@ public class FlashcardController {
         return ResponseEntity.ok(flashcardService.getFlashcardsByDeckId(deckId, pageRequest));
     }
 
-//    @FlashcardCreatePermission
-//    @PostMapping(value = "{deckId}")
-//    public ResponseEntity<List<FlashcardDTO>> createFlashcard(@PathVariable Long deckId,
-//                                                              @RequestBody List<FlashcardDTO> flashcardDTOList
-//    ) throws IOException {
-//        return ResponseEntity.ok().body(flashcardService.createOrUpdate(deckId, flashcardDTOList));
-//    }
-
     @FlashcardCreatePermission
     @PostMapping(value = "{deckId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createFlashcard(@PathVariable Long deckId,
@@ -60,33 +53,14 @@ public class FlashcardController {
                 .body(flashcardService.createOrUpdate(deckId, flashcardDTOList, httpServletRequest));
     }
 
-//    @FlashcardCreatePermission
-//    @PostMapping(value = "{deckId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public ResponseEntity<FlashcardImageDTO> createFlashcard(@PathVariable Long deckId,
-//                                                             @RequestPart List<FlashcardDTO> flashcardDTO,
-//                                                             @RequestPart List<MultipartFile> img
-//    ) throws IOException {
-//        FlashcardImageDTO flashcardImageDTO = flashcardService.createOrUpdate(deckId, flashcardDTO, img);
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION,
-//                        "attachment; filename=\"" + img.getResource().getFilename() + "\"")
-//                .body(flashcardImageDTO);
-//    }
-//
-//    @FlashcardUpdatePermission
-//    @PutMapping(value = "{deckId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public ResponseEntity<FlashcardImageDTO> updateFlashcard(@PathVariable Long deckId,
-//                                                             @RequestPart FlashcardDTO flashcardDTO,
-//                                                             @RequestPart MultipartFile img
-//    ) throws IOException {
-//        FlashcardImageDTO flashcardImageDTO = flashcardService.createOrUpdate(deckId, flashcardDTO, img);
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION,
-//                        "attachment; filename=\"" + img.getResource().getFilename() + "\"")
-//                .body(flashcardImageDTO);
-//    }
+    @FlashcardCreatePermission
+    @PostMapping(value = "{deckId}/file", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<List<FlashcardDTO>> createFlashcard(@PathVariable Long deckId,
+                                                              @RequestParam("excFile") MultipartFile multipartFile
+    ) throws IOException {
+        return ResponseEntity.ok()
+                .body(flashcardService.createOrUpdate(deckId, multipartFile));
+    }
 
     @FlashcardUpdatePermission
     @PutMapping(value = "{deckId}")
