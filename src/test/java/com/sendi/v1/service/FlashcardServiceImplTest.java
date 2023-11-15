@@ -152,7 +152,7 @@ class FlashcardServiceImplTest {
         when(flashcardMapper.toDTO(any(Flashcard.class))).thenReturn(expectedFlashcardDTO);
         when(flashcardMapper.toEntity(any(FlashcardDTO.class))).thenReturn(expectedFlashcard);
 
-        FlashcardDTO actualFlashcardDTO = service.createOrUpdate(anyLong(), new FlashcardDTO());
+        FlashcardDTO actualFlashcardDTO = service.createOrUpdate(anyLong(), new ArrayList<>(Arrays.asList(new FlashcardDTO()))).get(0);
 
         assertThat(actualFlashcardDTO.getTerm()).isEqualTo(expectedFlashcardDTO.getTerm());
         assertThat(actualFlashcardDTO.getDefinition()).isEqualTo(expectedFlashcardDTO.getDefinition());
@@ -163,7 +163,7 @@ class FlashcardServiceImplTest {
         when(deckRepository.findById(anyLong())).thenThrow(NoSuchDeckException.class);
 
         assertThrows(NoSuchDeckException.class, () -> {
-            service.createOrUpdate(getRandomLong(), new FlashcardDTO());
+            service.createOrUpdate(getRandomLong(), new ArrayList<>(Arrays.asList(new FlashcardDTO())));
         });
     }
 

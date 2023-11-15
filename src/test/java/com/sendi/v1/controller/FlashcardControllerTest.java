@@ -24,6 +24,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,8 +101,9 @@ class FlashcardControllerTest {
     @WithMockUser(authorities = "flashcard.create")
     @Test
     void createFlashcard() throws Exception {
-        when(flashcardService.createOrUpdate(anyLong(), any(FlashcardDTO.class)))
-                .thenReturn(flashcardDTO);
+        List<FlashcardDTO> list = new ArrayList<>(Arrays.asList(new FlashcardDTO()));
+        when(flashcardService.createOrUpdate(anyLong(), anyList()))
+                .thenReturn(list);
 
         ResultActions resultActions = mockMvc.perform(post(BASE_URL_FLASHCARDS + "/{deckId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -110,13 +113,13 @@ class FlashcardControllerTest {
                 .andExpect(jsonPath("$.term", CoreMatchers.is(flashcardDTO.getTerm())))
                 .andExpect(jsonPath("$.definition", CoreMatchers.is(flashcardDTO.getDefinition())));
 
-        verify(flashcardService, times(1)).createOrUpdate(anyLong(), any(FlashcardDTO.class));
+        verify(flashcardService, times(1)).createOrUpdate(anyLong(), anyList());
     }
 
     @WithMockUser(authorities = "flashcard.create")
     @Test
     void createFlashcardWhenDeckDoesNotExist() throws Exception {
-        when(flashcardService.createOrUpdate(anyLong(), any(FlashcardDTO.class)))
+        when(flashcardService.createOrUpdate(anyLong(), anyList()))
                 .thenThrow(NoSuchDeckException.class);
 
         MockHttpServletResponse response = mockMvc.perform(post(BASE_URL_FLASHCARDS + "/{deckId}", 1L)
@@ -127,15 +130,15 @@ class FlashcardControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 
-        verify(flashcardService, times(1)).createOrUpdate(anyLong(), any(FlashcardDTO.class));
+        verify(flashcardService, times(1)).createOrUpdate(anyLong(), anyList());
     }
 
 
     @WithMockUser(authorities = "flashcard.update")
     @Test
     void updateFlashcard() throws Exception {
-        when(flashcardService.createOrUpdate(anyLong(), any(FlashcardDTO.class)))
-                .thenReturn(flashcardDTO);
+        when(flashcardService.createOrUpdate(anyLong(), anyList()))
+                .thenReturn(new ArrayList<>(Arrays.asList(new FlashcardDTO())));
 
         ResultActions resultActions = mockMvc.perform(put(BASE_URL_FLASHCARDS + "/{deckId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -145,13 +148,13 @@ class FlashcardControllerTest {
                 .andExpect(jsonPath("$.term", CoreMatchers.is(flashcardDTO.getTerm())))
                 .andExpect(jsonPath("$.definition", CoreMatchers.is(flashcardDTO.getDefinition())));
 
-        verify(flashcardService, times(1)).createOrUpdate(anyLong(), any(FlashcardDTO.class));
+        verify(flashcardService, times(1)).createOrUpdate(anyLong(), anyList());
     }
 
     @WithMockUser(authorities = "flashcard.update")
     @Test
     void updateFlashcardWhenDeckDoesNotExist() throws Exception {
-        when(flashcardService.createOrUpdate(anyLong(), any(FlashcardDTO.class)))
+        when(flashcardService.createOrUpdate(anyLong(), anyList()))
                 .thenThrow(NoSuchDeckException.class);
 
         ResultActions resultActions = mockMvc.perform(put(BASE_URL_FLASHCARDS + "/{deckId}", 1L)
@@ -160,7 +163,7 @@ class FlashcardControllerTest {
 
         resultActions.andExpect(status().isNotFound());
 
-        verify(flashcardService, times(1)).createOrUpdate(anyLong(), any(FlashcardDTO.class));
+        verify(flashcardService, times(1)).createOrUpdate(anyLong(), anyList());
     }
 
     @WithMockUser(authorities = "flashcard.delete")

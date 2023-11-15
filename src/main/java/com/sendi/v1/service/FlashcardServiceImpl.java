@@ -260,6 +260,7 @@ public class FlashcardServiceImpl implements FlashcardService {
             }
 
             fileInputStream.close();
+            excFile.delete();
         }
 
         return createOrUpdate(deckId, flashcardDTOList);
