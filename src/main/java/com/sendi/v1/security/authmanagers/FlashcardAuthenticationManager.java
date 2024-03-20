@@ -20,7 +20,6 @@ public class FlashcardAuthenticationManager {
     private final DeckRepository deckRepository;
     public boolean idMatchesFlashcard(Authentication authentication, Long deckId) {
         User authenticatedUser = (User) authentication.getPrincipal();
-
         if (deckRepository.existsById(deckId)) {
             return deckRepository.findById(deckId).get().getUser().getId().equals(authenticatedUser.getId());
         }

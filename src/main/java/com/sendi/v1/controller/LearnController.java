@@ -5,6 +5,7 @@ import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.model.FlashcardDTO;
 import com.sendi.v1.service.LearnService;
 import com.sendi.v1.service.model.FlashcardImageDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping( value = "/api/v1/learn")
+@SecurityRequirement(name = "bearerAuth")
 public class LearnController {
     private final LearnService learnService;
 

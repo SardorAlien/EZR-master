@@ -19,6 +19,7 @@ import java.util.Objects;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity implements Serializable {
+
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

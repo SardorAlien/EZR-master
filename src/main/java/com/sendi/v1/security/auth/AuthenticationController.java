@@ -2,6 +2,7 @@ package com.sendi.v1.security.auth;
 
 import com.sendi.v1.exception.custom.UserDuplicationException;
 import com.sendi.v1.security.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

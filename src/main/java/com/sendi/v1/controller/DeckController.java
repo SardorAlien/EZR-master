@@ -9,6 +9,7 @@ import com.sendi.v1.service.DeckService;
 import com.sendi.v1.test.*;
 import com.sendi.v1.test.question.TestQuestions;
 import com.sendi.v1.test.question.TestRequest;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/decks")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class DeckController {
     private final DeckService deckService;
 

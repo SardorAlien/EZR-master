@@ -8,6 +8,7 @@ import com.sendi.v1.security.config.permission.FlashcardUpdatePermission;
 import com.sendi.v1.service.FlashcardService;
 import com.sendi.v1.service.model.FlashcardDTORepresentable;
 import com.sendi.v1.service.model.FlashcardImageDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/flashcards")
 @RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = "bearerAuth")
 public class FlashcardController {
     private final FlashcardService flashcardService;
 
@@ -44,10 +47,19 @@ public class FlashcardController {
     }
 
     @FlashcardCreatePermission
-    @PostMapping(value = "{deckId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "{deckId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> createFlashcard(@PathVariable Long deckId,
-                                             @RequestPart List<FlashcardDTO> flashcardDTOList,
-                                             HttpServletRequest httpServletRequest
+                                             @RequestBody List<FlashcardDTO> flashcardDTOList
+    ) throws IOException {
+        return ResponseEntity.ok()
+                .body(flashcardService.createOrUpdate(deckId, flashcardDTOList));
+    }
+
+    @FlashcardCreatePermission
+    @PostMapping(value = "{deckId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> createFlashcardWithFile(@PathVariable Long deckId,
+                                                     @RequestPart List<FlashcardDTO> flashcardDTOList,
+                                                     HttpServletRequest httpServletRequest
     ) throws IOException {
         return ResponseEntity.ok()
                 .body(flashcardService.createOrUpdate(deckId, flashcardDTOList, httpServletRequest));

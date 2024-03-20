@@ -1,9 +1,6 @@
 package com.sendi.v1.service.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 @Builder
@@ -16,5 +13,7 @@ import lombok.*;
 public class FlashcardImageDTO implements FlashcardDTORepresentable {
     @JsonProperty("flashcard")
     private FlashcardDTO flashcardDTO;
+
+    @JsonIgnore
     private byte[] bytes;
 }
