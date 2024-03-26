@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -22,7 +23,7 @@ public class UserUnlockService {
 
         List<User> lockedUsers = userRepository
                 .findAllByAccountNonLockedAndLastModifiedTimeIsBefore(false,
-                        LocalDate.now().minusDays(1L));
+                        LocalDateTime.now().minusDays(1L));
 
         if (lockedUsers.size() > 0) {
             log.info("Locked users found, unlocking : ");

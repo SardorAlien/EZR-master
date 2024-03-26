@@ -1,6 +1,7 @@
 package com.sendi.v1.security.repo;
 
 import com.sendi.v1.security.domain.User;
+//import com.sendi.v1.security.domain.User_;
 import com.sendi.v1.security.domain.User_;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Optional<User> findByEmail(String email);
     Boolean existsByUsername(String username);
 
-    List<User> findAllByAccountNonLockedAndLastModifiedTimeIsBefore(Boolean locked, LocalDate localDate);
+    List<User> findAllByAccountNonLockedAndLastModifiedTimeIsBefore(Boolean locked, LocalDateTime localDateTime);
     
     interface Specs {
         static Specification<User> byUsername(String username) {

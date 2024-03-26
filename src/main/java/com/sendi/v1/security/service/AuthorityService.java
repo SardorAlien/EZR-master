@@ -10,4 +10,5 @@ public interface AuthorityService {
     Authority getById(Long id);
     Authority getByPermission(String permission);
     long count();
+    boolean existsByPermission(String permission);
 }

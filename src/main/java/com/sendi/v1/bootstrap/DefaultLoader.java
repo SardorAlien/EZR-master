@@ -32,6 +32,7 @@ public class DefaultLoader implements CommandLineRunner {
 
     private void loadSecurityData() {
         try {
+            log.info("Bootstrapping started...");
             Authority createDeck = Authority.builder().permission("deck.create").build();
             Authority readDeck = Authority.builder().permission("deck.read").build();
             Authority updateDeck = Authority.builder().permission("deck.update").build();
@@ -45,15 +46,20 @@ public class DefaultLoader implements CommandLineRunner {
             Arrays.asList(createDeck, readDeck, updateDeck, deleteDeck)
                     .stream()
                     .forEach(deckAuthority -> {
-                        authorityService.createOrUpdate(deckAuthority);
+                        if (!authorityService.existsByPermission(deckAuthority.getPermission())) {
+                            log.info("Saving authority: {}", deckAuthority.getPermission());
+                            authorityService.createOrUpdate(deckAuthority);
+                        }
                     });
 
             Arrays.asList(createFlashcard, readFlashcard, updateFlashcard, deleteFlashcard)
                     .stream()
                     .forEach(flashcardAuthority -> {
-                        authorityService.createOrUpdate(flashcardAuthority);
-                    });;
-
+                        if (!authorityService.existsByPermission(flashcardAuthority.getPermission())) {
+                            log.info("Saving authority: {}", flashcardAuthority.getPermission());
+                            authorityService.createOrUpdate(flashcardAuthority);
+                        }
+                    });
 
             Role adminRole = Role.builder().name("ADMIN").build();
             Role customerRole = Role.builder().name("CUSTOMER").build();
@@ -69,7 +75,10 @@ public class DefaultLoader implements CommandLineRunner {
             Arrays.asList(adminRole, customerRole, userRole)
                     .stream()
                     .forEach(role -> {
-                        roleService.createOrUpdate(role);
+                        if (!roleService.existsByRoleName(role.getName())) {
+                            roleService.createOrUpdate(role);
+                            log.info("Saving role: {}", role.getName());
+                        }
                     });
 
             User user1 = User.builder()
@@ -90,8 +99,15 @@ public class DefaultLoader implements CommandLineRunner {
                     .role(adminRole)
                     .build();
 
-            userService.createOrUpdate(user1);
-            userService.createOrUpdate(user2);
+            if (!userService.existsByUsername(user1.getUsername())) {
+                log.info("Saving user: {}", user1.getUsername());
+                userService.createOrUpdate(user1);
+            }
+
+            if (!userService.existsByUsername(user2.getUsername())) {
+                log.info("Saving user: {}", user2.getUsername());
+                userService.createOrUpdate(user2);
+            }
 
         } catch (Exception e) {
             Arrays.stream(e.getStackTrace()).forEach(stackTraceElement -> log.error(String.valueOf(stackTraceElement)));

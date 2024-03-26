@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -29,9 +30,9 @@ public class BaseEntity implements Serializable {
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "last_modified_time", nullable = false)
-    private Timestamp lastModifiedTime;
+    private LocalDateTime lastModifiedTime;
 
     @Override
     public boolean equals(Object o) {

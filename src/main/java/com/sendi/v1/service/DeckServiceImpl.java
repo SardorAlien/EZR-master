@@ -1,6 +1,7 @@
 package com.sendi.v1.service;
 
 import com.sendi.v1.domain.Deck;
+import com.sendi.v1.domain.DeckVisibility;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
 import com.sendi.v1.exception.custom.NoSuchUserException;
 import com.sendi.v1.service.model.DeckDTO;
@@ -22,6 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

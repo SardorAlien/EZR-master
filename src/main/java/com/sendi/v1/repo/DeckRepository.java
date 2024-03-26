@@ -28,10 +28,6 @@ public interface DeckRepository extends PagingAndSortingRepository<Deck, Long>,
             "from decks d where d.id = ?1")
     DeckDTO findDeckByIdWithoutFlashcards(Long id);
 
-//    @Modifying
-//    @Query("update decks d set d.completionPercentage = :percentage where d.id = :deckId")
-//    void updateCompletionPercentageByDeckId(Long deckId, Integer percentage);
-
     @Modifying
     @Query(value = "update decks d set completion_percentage = " +
             "(select count(*) from flashcards f1 where is_learned = true and f1.deck_id = d.id) * 100 / " +
@@ -39,11 +35,6 @@ public interface DeckRepository extends PagingAndSortingRepository<Deck, Long>,
             "where d.id = :deckId and d.id = f.deck_id", nativeQuery = true)
     void updateCompletionPercentageByDeckId(Long deckId);
 
-//    @Modifying
-//    @Query(value = "update decks d set completion_percentage = " +
-//            "(select count(*) from flashcards where is_learned = true) * 100 / (select count(*) from flashcards) " +
-//            "from flashcards as f where deck_id in :deckIds ;", nativeQuery = true)
-//    void updateCompletionPercentageByDeckIds(List<Long> deckIds);
 
     @Modifying
     @Query(value = "update decks d set completion_percentage = " +

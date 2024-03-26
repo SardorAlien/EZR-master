@@ -37,4 +37,9 @@ public class AuthorityServiceImpl implements AuthorityService {
     public long count() {
         return authorityRepository.count();
     }
+
+    @Override
+    public boolean existsByPermission(String permission) {
+        return authorityRepository.existsByPermission(permission);
+    }
 }

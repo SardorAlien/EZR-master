@@ -240,10 +240,11 @@ public class FlashcardServiceImpl implements FlashcardService {
         return flashcardDTOList;
     }
 
+    //The excel sheet should be 1st column: flashcard terms, 2nd column: flashcard definitions
     @Override
-    public List<FlashcardDTO> createOrUpdate(Long deckId, MultipartFile multipartFile) throws IOException {
-        File excFile = new File(System.getProperty("java.io.tmpdir") + "/" + multipartFile.getOriginalFilename());
-        multipartFile.transferTo(excFile);
+    public List<FlashcardDTO> createOrUpdate(Long deckId, MultipartFile excelFile) throws IOException {
+        File excFile = new File(System.getProperty("java.io.tmpdir") + "/" + excelFile.getOriginalFilename());
+        excelFile.transferTo(excFile);
         FileInputStream fileInputStream = new FileInputStream(excFile);
         Workbook workbook = null;
 

@@ -47,15 +47,6 @@ public class FlashcardController {
     }
 
     @FlashcardCreatePermission
-    @PostMapping(value = "{deckId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> createFlashcard(@PathVariable Long deckId,
-                                             @RequestBody List<FlashcardDTO> flashcardDTOList
-    ) throws IOException {
-        return ResponseEntity.ok()
-                .body(flashcardService.createOrUpdate(deckId, flashcardDTOList));
-    }
-
-    @FlashcardCreatePermission
     @PostMapping(value = "{deckId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createFlashcardWithFile(@PathVariable Long deckId,
                                                      @RequestPart List<FlashcardDTO> flashcardDTOList,
@@ -68,10 +59,10 @@ public class FlashcardController {
     @FlashcardCreatePermission
     @PostMapping(value = "{deckId}/file", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<List<FlashcardDTO>> createFlashcard(@PathVariable Long deckId,
-                                                              @RequestParam("excFile") MultipartFile multipartFile
+                                                              @RequestParam("excFile") MultipartFile excelMultipartFile
     ) throws IOException {
         return ResponseEntity.ok()
-                .body(flashcardService.createOrUpdate(deckId, multipartFile));
+                .body(flashcardService.createOrUpdate(deckId, excelMultipartFile));
     }
 
     @FlashcardUpdatePermission

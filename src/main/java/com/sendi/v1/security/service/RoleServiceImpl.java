@@ -38,4 +38,9 @@ public class RoleServiceImpl implements RoleService {
     public long count() {
         return roleRepository.count();
     }
+
+    @Override
+    public boolean existsByRoleName(String roleName) {
+        return roleRepository.existsByName(roleName);
+    }
 }

@@ -45,6 +45,9 @@ public class Deck extends BaseEntity {
     @Column(name = "completion_percentage")
     private Integer completionPercentage = 0;
 
+    @Column(name = "visibility")
+    private DeckVisibility deckVisibility;
+
     @Override
     public boolean equals(Object o) {
         return super.equals(o);

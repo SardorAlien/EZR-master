@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface AuthorityRepository extends JpaRepository<Authority, Long>{
     Optional<Authority> findByPermission(String permission);
+    boolean existsByPermission(String permission);
 }

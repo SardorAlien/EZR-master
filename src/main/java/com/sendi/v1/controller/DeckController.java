@@ -1,11 +1,13 @@
 package com.sendi.v1.controller;
 
+import com.sendi.v1.service.ShareDeckService;
 import com.sendi.v1.service.model.DeckDTO;
 import com.sendi.v1.security.config.permission.DeckCreatePermission;
 import com.sendi.v1.security.config.permission.DeckDeletePermission;
 import com.sendi.v1.security.config.permission.DeckReadPermission;
 import com.sendi.v1.security.config.permission.DeckUpdatePermission;
 import com.sendi.v1.service.DeckService;
+import com.sendi.v1.service.model.ShareWith;
 import com.sendi.v1.test.*;
 import com.sendi.v1.test.question.TestQuestions;
 import com.sendi.v1.test.question.TestRequest;
@@ -25,6 +27,7 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class DeckController {
     private final DeckService deckService;
+    private final ShareDeckService shareDeckService;
 
     @DeckReadPermission
     @GetMapping(value = "{userId}/all")
@@ -55,10 +58,10 @@ public class DeckController {
         return ResponseEntity.ok(deckService.getDecksInfoByUserId(userId, page, size));
     }
 
-
     @DeckCreatePermission
     @PostMapping("{userId}")
     public ResponseEntity<DeckDTO> createDeckByUserId(@PathVariable Long userId, @RequestBody DeckDTO deckDTO) {
+        System.out.println("visibility: " + deckDTO.getDeckVisibility());
         return new ResponseEntity<>(deckService.createOrUpdate(userId, deckDTO), HttpStatus.CREATED);
     }
 
@@ -86,5 +89,11 @@ public class DeckController {
     @GetMapping("{userId}/only/{deckId}")
     public ResponseEntity<DeckDTO> getDeckWithoutFlashcards(@PathVariable Long userId, @PathVariable Long deckId) {
         return ResponseEntity.ok(deckService.getOneByIdWithoutFlashcards(deckId));
+    }
+
+    @DeckReadPermission
+    @GetMapping("{userId}/share/{deckId}")
+    public ResponseEntity<?> shareDeck(@PathVariable Long userId, @RequestBody ShareWith shareWith, @PathVariable Long deckId) {
+        return ResponseEntity.ok(shareDeckService.shareDeckWithEmail(userId, shareWith, deckId));
     }
 }

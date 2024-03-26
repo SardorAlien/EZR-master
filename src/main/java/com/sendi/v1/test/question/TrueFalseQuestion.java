@@ -25,14 +25,12 @@ public class TrueFalseQuestion extends Question {
         String actualAnswer = QuestionAnswerUtil.getAnswer(flashcard, answerWith);
         String answerForUser = getAnswerForUser(flashcard, flashcardsWillBeEliminated, answerWith);
 
-        TrueFalseQuestion trueFalseQuestion = TrueFalseQuestion.builder()
+        return TrueFalseQuestion.builder()
                 .question(actualQuestion)
                 .actualAnswer(actualAnswer)
                 .answerForUser(answerForUser)
                 .flashcardId(flashcard.getId())
                 .build();
-
-        return trueFalseQuestion;
     }
 
     private String getAnswerForUser(Flashcard flashcard,

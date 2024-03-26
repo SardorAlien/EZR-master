@@ -2,6 +2,7 @@ package com.sendi.v1.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sendi.v1.domain.DeckVisibility;
 import lombok.*;
 
 import javax.validation.constraints.Size;
@@ -25,6 +26,9 @@ public class DeckDTO {
     private LocalDateTime lastVisitedAt;
 
     @Builder.Default
+    private DeckVisibility deckVisibility = DeckVisibility.ME;
+
+    @Builder.Default
     @Size(min = 0, max = 100, message = "Completion percenage should be between 0 and 100")
     private Integer completionPercentage = 0;
 
@@ -41,5 +45,15 @@ public class DeckDTO {
         this.createdAt = createdAt;
         this.lastVisitedAt = lastVisitedAt;
         this.completionPercentage = completionPercentage;
+    }
+
+    public DeckDTO(Long id, String name, String description, LocalDateTime createdAt, LocalDateTime lastVisitedAt, Integer completionPercentage, DeckVisibility deckVisibility) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.lastVisitedAt = lastVisitedAt;
+        this.completionPercentage = completionPercentage;
+        this.deckVisibility = deckVisibility;
     }
 }
