@@ -1,9 +1,11 @@
 package com.sendi.v1.security.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sendi.v1.domain.BaseEntity;
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Image;
+import com.sendi.v1.domain.Streak;
 import com.sendi.v1.security.token.Token;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -68,6 +70,12 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Image image;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<Streak> streaks;
+
 
     @Transient
     public Set<GrantedAuthority> getAuthorities() {

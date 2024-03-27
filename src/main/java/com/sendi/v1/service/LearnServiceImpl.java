@@ -21,33 +21,40 @@ public class LearnServiceImpl implements LearnService {
     private final FlashcardRepository flashcardRepo;
     private final DeckRepository deckRepo;
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public List<FlashcardImageDTO> beginLearningSession(Long deckId) {
         if (isDeckFinished(deckId)) {
             return getAllFlashcards(deckId);
         }
 
-        return getNotLearnedFlashcards(deckId);
+        return getNotLearnedFlashcardsAndUpdateLastVisitedAt(deckId);
     }
 
     private List<FlashcardImageDTO> getAllFlashcards(Long deckId) {
-        List<FlashcardImageDTO> flashcardDTOS = flashcardService.getFlashcardsByDeckId (deckId);
-
+        List<FlashcardImageDTO> flashcardDTOS = flashcardService.getFlashcardsByDeckId(deckId);
+        updateLastVisitedAt(deckId);
         return flashcardDTOS;
+    }
+
+    private List<FlashcardImageDTO> getNotLearnedFlashcardsAndUpdateLastVisitedAt(Long deckId) {
+        updateLastVisitedAt(deckId);
+        return getNotLearnedFlashcards(deckId);
+    }
+
+    private void updateLastVisitedAt(Long deckId) {
+        deckRepo.updateLastVisitedAt(deckId);
     }
 
     private List<FlashcardImageDTO> getNotLearnedFlashcards(Long deckId) {
-        List<FlashcardImageDTO> flashcardDTOS = flashcardService.getFlashcardsByDeckId(deckId)
+        return flashcardService.getFlashcardsByDeckId(deckId)
                 .stream()
                 .filter(t -> !t.getFlashcardDTO().isLearned())
                 .collect(Collectors.toList());
-
-        return flashcardDTOS;
     }
 
     private boolean isDeckFinished(Long deckId) {
-        return getNotLearnedFlashcards(deckId).size() == 0;
+        return getNotLearnedFlashcards(deckId).isEmpty();
     }
 
     @Override
@@ -68,5 +75,5 @@ public class LearnServiceImpl implements LearnService {
                     flashcard.setIsLearned(true);
                     flashcardRepo.save(flashcard);
                 });
-        }
+    }
 }

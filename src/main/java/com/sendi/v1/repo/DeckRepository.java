@@ -43,6 +43,10 @@ public interface DeckRepository extends PagingAndSortingRepository<Deck, Long>,
             "from flashcards as f where user_id = :userId and d.id = f.deck_id;", nativeQuery = true)
     void updateCompletionPercentageByUserId(Long userId);
 
+    @Modifying
+    @Query(value = "update decks d set last_visited_at = now() from decks where d.id = :deckId", nativeQuery = true)
+    void updateLastVisitedAt(Long deckId);
+
     interface Specs {
         static Specification<Deck> byName(String name) {
             return (root, query, builder) ->

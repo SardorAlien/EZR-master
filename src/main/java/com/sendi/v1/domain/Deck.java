@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sendi.v1.security.domain.User;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -38,8 +39,8 @@ public class Deck extends BaseEntity {
     @JsonBackReference
     private User user;
 
-    @LastModifiedDate
     @Column(name = "last_visited_at")
+    @CreatedDate
     private LocalDateTime lastVisitedAt;
 
     @Column(name = "completion_percentage")
@@ -47,6 +48,11 @@ public class Deck extends BaseEntity {
 
     @Column(name = "visibility")
     private DeckVisibility deckVisibility;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deck", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JsonManagedReference
+    private Set<DeckVisits> deckVisits;
 
     @Override
     public boolean equals(Object o) {
