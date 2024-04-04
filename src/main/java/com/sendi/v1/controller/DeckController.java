@@ -13,7 +13,9 @@ import com.sendi.v1.test.question.TestQuestions;
 import com.sendi.v1.test.question.TestRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/decks")
 @RequiredArgsConstructor
@@ -40,7 +43,6 @@ public class DeckController {
     public ResponseEntity<List<DeckDTO>> getAllDecksByUserId(@RequestParam("page") int page,
                                                              @RequestParam("size") int size,
                                                              @PathVariable Long userId) {
-
         return ResponseEntity.ok(deckService.getDecksByUserId(userId, page, size));
     }
 

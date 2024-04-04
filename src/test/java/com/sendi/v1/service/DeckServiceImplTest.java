@@ -14,8 +14,12 @@ import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.data.domain.Page;
 
+import java.awt.print.Pageable;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,7 +35,13 @@ class DeckServiceImplTest {
     DeckRepository deckRepository;
 
     @Captor
-    ArgumentCaptor<User> userCaptor;
+    ArgumentCaptor<Long> longArgumentCaptor;
+
+    @Captor
+    ArgumentCaptor<Deck> deckArgumentCaptor;
+
+    @Captor
+    ArgumentCaptor<DeckDTO> deckDTOArgumentCaptor;
 
     @Mock
     UserRepository userRepository;
@@ -39,69 +49,74 @@ class DeckServiceImplTest {
     @Mock
     DeckMapper deckMapper;
 
-    class FindDecks implements Answer<List<Deck>> {
+    private class FindDecksWithUserId implements Answer<List<Deck>> {
         @Override
         public List<Deck> answer(InvocationOnMock invocationOnMock) throws Throwable {
-            User user = invocationOnMock.getArgument(0);
+            Long userId = invocationOnMock.getArgument(0);
 
-            if (user == null)
-                return Collections.emptyList();
-            else {
-                return sampleDecks();
-            }
+            if (userId > 0) return sampleDecks();
+
+            return Collections.emptyList();
         }
     }
 
-    private List<Deck> sampleDecks() {
-        Deck deck1 = new Deck();
-        deck1.setName("deck1");
-        deck1.setDescription("desc1");
+    private class DeckMapperToDTO implements Answer<DeckDTO> {
+        @Override
+        public DeckDTO answer(InvocationOnMock invocationOnMock) throws Throwable {
+            if (invocationOnMock.getArgument(0) instanceof Deck) {
+                Deck deck = invocationOnMock.getArgument(0);
+                DeckDTO mappedDeck = DeckDTO.builder()
+                        .name(deck.getName())
+                        .description(deck.getDescription())
+                        .build();
 
-        Deck deck2 = new Deck();
-        deck2.setName("deck2");
-        deck2.setDescription("desc2");
-        return List.of(deck1, deck2);
+                return mappedDeck;
+            }
+
+            return null;
+        }
     }
 
-//    @Test
-//    void getDecksByUserExists() {
-//        when(deckRepository.findAllByUser(userCaptor.capture())).thenAnswer(new FindDecks());
-//
-//        User actualUser = User.builder()
-//                .firstname("Harry")
-//                .lastname("Potter")
-//                .build();
-//
-//        List<DeckDTO> actualDecks = service.getDecksByUser(actualUser);
-//
-//        assertThat(userCaptor.getValue()).isNotNull();
-//        assertThat(actualDecks).hasSize(2);
-//    }
-//
+    private class DeckDTOMapperToEntity implements Answer<Deck> {
+        @Override
+        public Deck answer(InvocationOnMock invocationOnMock) throws Throwable {
+            if (invocationOnMock.getArgument(0) instanceof DeckDTO) {
+                DeckDTO deckDTO = invocationOnMock.getArgument(0);
+                Deck mappedDeck = new Deck();
+                mappedDeck.setName(deckDTO.getName());
+                mappedDeck.setDescription(deckDTO.getDescription());
+
+                return mappedDeck;
+            }
+
+            return null;
+        }
+    }
+
+    @Test
+    void getDecksByUserExists() {
+        when(deckRepository.findAllByUserId(longArgumentCaptor.capture(), any())).thenAnswer(new FindDecksWithUserId());
+
+        List<DeckDTO> actualDecks = service.getDecksByUserId(getRandomLong());
+
+        assertThat(longArgumentCaptor.getValue()).isNotNull();
+        assertThat(actualDecks).hasSize(2);
+    }
+
 
     @Test
     void getDecksByUserId() {
-        User expectedUser = User.builder()
-                .firstname("Harry")
-                .lastname("Potter")
-                .build();
-        expectedUser.setId(1L);
-
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(expectedUser));
-//        when(deckRepository.findAllByUser(any(User.class))).thenAnswer(new FindDecks());
+        when(deckRepository.findAllByUserId(anyLong(), any())).thenAnswer(new FindDecksWithUserId());
 
         List<DeckDTO> actualDecks = service.getDecksByUserId(getRandomLong());
 
         assertThat(actualDecks).hasSize(2);
-
-        verify(userRepository).findById(anyLong());
-//        verify(deckRepository).findAllByUser(any(User.class));
+        verify(deckRepository).findAllByUserId(anyLong(), any());
     }
 
     @Test
     void getOneById() {
         Deck expectedDeck = sampleDecks().get(0);
-        System.out.println(expectedDeck);
         when(deckRepository.findById(anyLong())).thenReturn(Optional.ofNullable(expectedDeck));
 
         DeckDTO expectedDeckDTO = new DeckDTO();
@@ -111,7 +126,6 @@ class DeckServiceImplTest {
         when(deckMapper.toDTO(any(Deck.class))).thenReturn(expectedDeckDTO);
 
         DeckDTO actualDeckDTO = service.getOneById(getRandomLong());
-
 
         assertThat(actualDeckDTO.getName()).isEqualTo(expectedDeckDTO.getName());
         assertThat(actualDeckDTO.getDescription()).isEqualTo(expectedDeckDTO.getDescription());
@@ -129,6 +143,24 @@ class DeckServiceImplTest {
         });
 
         verify(deckRepository).findById(anyLong());
+    }
+
+    @Test
+    void getOneByIdWithoutFlashcards() {
+        Deck deck = sampleDecks().get(0);
+        DeckDTO expectedDeckDTO = DeckDTO.builder()
+                .name(deck.getName())
+                .description(deck.getDescription())
+                .build();
+
+        when(deckRepository.findDeckByIdWithoutFlashcards(anyLong())).thenReturn(expectedDeckDTO);
+
+        DeckDTO actualDeckDTO = service.getOneByIdWithoutFlashcards(getRandomLong());
+
+        assertThat(actualDeckDTO.getName()).isEqualTo(expectedDeckDTO.getName());
+        assertThat(actualDeckDTO.getFlashcardDTOS()).isNull();
+
+        verify(deckRepository).findDeckByIdWithoutFlashcards(anyLong());
     }
 
     @Test
@@ -154,6 +186,46 @@ class DeckServiceImplTest {
     }
 
     @Test
+    void createOrUpdateAll() {
+        Iterable<Deck> expectedDeckIterable = sampleDecks();
+        when(deckRepository.saveAll(anyList())).thenReturn(expectedDeckIterable);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(new User()));
+
+        Iterator<Deck> decksIterator = expectedDeckIterable.iterator();
+
+        List<Deck> expectedDeckList = new ArrayList<>();
+        decksIterator.forEachRemaining(expectedDeckList::add);
+
+        List<DeckDTO> expectedDeckDTOList = expectedDeckList.stream().map(deck -> DeckDTO.builder()
+                .name(deck.getName())
+                .description(deck.getDescription())
+                .build()).collect(Collectors.toList());
+
+        when(deckMapper.toDTO(deckArgumentCaptor.capture())).thenAnswer(new DeckMapperToDTO());
+        when(deckMapper.toEntity(deckDTOArgumentCaptor.capture())).thenAnswer(new DeckDTOMapperToEntity());
+
+        List<DeckDTO> deckDTOListToBeSaved = expectedDeckDTOList;
+        Iterable<DeckDTO> actualSavedDeckDTOList = service.createOrUpdateAll(getRandomLong(), deckDTOListToBeSaved);
+        Iterator<DeckDTO> actualDeckDTOsIterator = actualSavedDeckDTOList.iterator();
+
+        List<DeckDTO> actualDeckDTOList = new ArrayList<>();
+        actualDeckDTOsIterator.forEachRemaining(actualDeckDTOList::add);
+
+        List<Deck> actualDeckList = actualDeckDTOList.stream().map(deckDTO -> {
+            Deck deck = new Deck();
+            deck.setName(deckDTO.getName());
+            deck.setDescription(deckDTO.getDescription());
+            return deck;
+        }).collect(Collectors.toList());
+
+        assertThat(actualDeckList.get(0).getName()).isEqualTo(expectedDeckList.get(0).getName());
+        assertThat(actualDeckList.size()).isEqualTo(expectedDeckList.size());
+
+        verify(deckMapper, times(2)).toEntity(any(DeckDTO.class));
+        verify(deckMapper, times(2)).toDTO(any(Deck.class));
+    }
+
+    @Test
     void createOrUpdateThrowNoSuchUserException() {
         when(userRepository.findById(anyLong())).thenThrow(NoSuchUserException.class);
 
@@ -176,5 +248,16 @@ class DeckServiceImplTest {
 
     private long getRandomLong() {
         return new Random().longs(1, 10).findFirst().getAsLong();
+    }
+
+    private List<Deck> sampleDecks() {
+        Deck deck1 = new Deck();
+        deck1.setName("deck1");
+        deck1.setDescription("desc1");
+
+        Deck deck2 = new Deck();
+        deck2.setName("deck2");
+        deck2.setDescription("desc2");
+        return List.of(deck1, deck2);
     }
 }

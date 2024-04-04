@@ -73,7 +73,6 @@ public class DeckServiceImpl implements DeckService {
 
         List<DeckDTO> deckDTOList = deckDTOPage.toList();
 
-
         return deckDTOList;
     }
 
@@ -88,12 +87,15 @@ public class DeckServiceImpl implements DeckService {
     public DeckDTO getOneById(Long deckId) {
         updateCompletionPercentageByDeckId(deckId);
 
-        DeckDTO deckDTO = Optional.ofNullable(deckRepo.findById(deckId))
-                .orElseThrow(() -> new NoSuchDeckException(deckId)).map(deckMapper::toDTO).
-                get();
+        Optional<Deck> optionalDeckDTO = deckRepo.findById(deckId);
 
+        if (optionalDeckDTO.isPresent()) {
+            return optionalDeckDTO
+                    .map(deckMapper::toDTO)
+                    .get();
+        }
 
-        return deckDTO;
+        throw new NoSuchDeckException(deckId);
     }
 
     @Override
@@ -103,7 +105,6 @@ public class DeckServiceImpl implements DeckService {
 
         DeckDTO deckDTO = Optional.ofNullable(deckRepo.findDeckByIdWithoutFlashcards(deckId))
                 .orElseThrow(() -> new NoSuchDeckException(deckId));
-
 
         return deckDTO;
     }
@@ -126,6 +127,23 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    public List<DeckDTO> createOrUpdateAll(Long userId, List<DeckDTO> deckDTOs) {
+        User user = Optional.ofNullable(userRepo.findById(userId))
+                .orElseThrow(() -> new NoSuchUserException(userId))
+                .get();
+
+        List<Deck> deckAfterModification = deckDTOs.stream().map(deckMapper::toEntity).map(deck -> {
+            Deck copy = deck;
+            copy.setUser(user);
+            return copy;
+        }).collect(Collectors.toList());
+
+        deckRepo.saveAll(deckAfterModification);
+
+        return deckAfterModification.stream().map(deckMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public void deleteById(Long id) {
         deckRepo.deleteById(id);
@@ -144,5 +162,11 @@ public class DeckServiceImpl implements DeckService {
     @Transactional
     public void updateCompletionPercentageByDeckId(Long deckId) {
         deckRepo.updateCompletionPercentageByDeckId(deckId);
+    }
+
+
+    @Override
+    public Long count() {
+        return deckRepo.count();
     }
 }

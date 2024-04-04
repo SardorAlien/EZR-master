@@ -12,7 +12,6 @@ public class StreakService {
     private final StreakRepository streakRepository;
 
     public StreakDTO getCurrentStreak(Long userId) {
-
         Streak streak = streakRepository.findTopByUserIdOrderByLastStreakDateTimeDesc(userId);
         return new StreakDTO(streak.getId(), streak.getUser().getId(), streak.getCurrentStreak());
     }

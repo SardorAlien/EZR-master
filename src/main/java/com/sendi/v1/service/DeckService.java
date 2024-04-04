@@ -24,4 +24,8 @@ public interface DeckService {
     void deleteById(Long deckId);
 
     boolean existsById(Long deckId);
+
+    List<DeckDTO> createOrUpdateAll(Long userId, List<DeckDTO> deckDTOs);
+
+    Long count();
 }

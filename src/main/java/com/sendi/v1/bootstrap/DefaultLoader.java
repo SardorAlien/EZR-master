@@ -1,25 +1,24 @@
 package com.sendi.v1.bootstrap;
 
-import com.sendi.v1.exception.custom.UserDuplicationException;
+import com.sendi.v1.domain.Deck;
+import com.sendi.v1.domain.DeckVisibility;
 import com.sendi.v1.security.domain.Authority;
 import com.sendi.v1.security.domain.Role;
 import com.sendi.v1.security.domain.User;
-import com.sendi.v1.security.repo.AuthorityRepository;
-import com.sendi.v1.security.repo.RoleRepository;
-import com.sendi.v1.security.repo.UserRepository;
 import com.sendi.v1.security.service.AuthorityService;
 import com.sendi.v1.security.service.RoleService;
 import com.sendi.v1.security.service.UserService;
+import com.sendi.v1.service.DeckService;
+import com.sendi.v1.service.model.DeckDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +28,7 @@ public class DefaultLoader implements CommandLineRunner {
     private final AuthorityService authorityService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final DeckService deckService;
 
     private void loadSecurityData() {
         try {
@@ -116,8 +116,51 @@ public class DefaultLoader implements CommandLineRunner {
         }
     }
 
+    private void loadDeckAndFlashcardData() {
+        List<String> list = new ArrayList<>();
+        List<DeckDTO> deckDTOs = new ArrayList<>();
+
+        File file = new File("src/main/resources/static/unigram_freq.csv");
+        log.info("File exists: {}", file.exists());
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            bufferedReader.lines().map(s -> s.substring(0, s.indexOf(','))).forEach(list::add);
+
+            for (long i = 0; i < 1_000_000_000_000L; i++) {
+                int randomNumber = (int) (Math.random() * (333334 - 1) + 1);
+                int randomNumber2 = (int) (Math.random() * (333334 - 1) + 1);
+                int randomNumForPercentage = (int) (Math.random() * 100);
+                deckDTOs.add(DeckDTO.builder()
+                                .name(list.get(randomNumber))
+                                .description(list.get(randomNumber2))
+                                .completionPercentage(randomNumForPercentage)
+                                .createdAt(LocalDateTime.now())
+                                .lastVisitedAt(LocalDateTime.now())
+                                .deckVisibility(DeckVisibility.EVERYONE)
+                        .build());
+
+                if (deckDTOs.size() == 100_000) {
+                    deckService.createOrUpdateAll(3L, deckDTOs);
+                    deckDTOs.clear();
+                    log.info("Done uploading hundred thousand rows of decks!");
+                }
+            }
+
+            log.info("Done uploading billion rows of decks!");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            log.info("Decks loaded: {}", deckService.count());
+        }
+    }
+
     @Override
     public void run(String... args) throws Exception {
         loadSecurityData();
+//        loadDeckAndFlashcardData();
     }
+
+
 }
