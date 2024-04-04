@@ -28,7 +28,6 @@ class FlashcardMapperTest {
 
         //then
         assertEquals(flashcard.getTerm(), flashcardDTO.getTerm());
-//        assertEquals(flashcard.getDeck(), flashcardDTO.getDeck());
         assertEquals(flashcard.getDefinition(), flashcardDTO.getDefinition());
     }
 

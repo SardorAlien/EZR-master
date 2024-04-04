@@ -2,6 +2,7 @@ package com.sendi.v1.service.model.mapper;
 
 import com.sendi.v1.domain.Deck;
 import com.sendi.v1.service.model.DeckDTO;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
