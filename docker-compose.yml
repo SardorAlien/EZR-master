@@ -1,0 +1,29 @@
+services:
+  postgres:
+    container_name: postgres-sql
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ezr
+    ports:
+      - "9999:5432"
+    volumes:
+      - postgres:/var/lib/postgres/data
+    networks:
+      - ezr-network
+  ezr:
+    container_name: ezr
+    image: ezr
+    ports:
+      - "8088:8088"
+    networks:
+      - ezr-network
+    depends_on:
+      - postgres
+volumes:
+  postgres:
+
+networks:
+  ezr-network:
+    driver: bridge
