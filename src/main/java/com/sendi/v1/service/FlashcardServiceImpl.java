@@ -4,6 +4,7 @@ import com.sendi.v1.domain.Deck;
 import com.sendi.v1.domain.Flashcard;
 import com.sendi.v1.domain.Image;
 import com.sendi.v1.exception.custom.NoSuchDeckException;
+import com.sendi.v1.exception.custom.NoSuchFlashcardException;
 import com.sendi.v1.repo.ImageRepository;
 import com.sendi.v1.security.domain.User;
 import com.sendi.v1.security.repo.UserRepository;
@@ -53,13 +54,9 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Transactional(readOnly = true)
     @Override
     public FlashcardDTORepresentable getOneById(Long flashcardId) {
-        Optional<Flashcard> flashcardOptional = flashcardRepo.findById(flashcardId);
+        Flashcard flashcard = Optional.of(flashcardRepo.findById(flashcardId))
+                .orElseThrow(() -> new NoSuchFlashcardException(flashcardId)).get();
 
-        if (flashcardOptional.isEmpty()) {
-            throw new RuntimeException("Invalid flashcardId");
-        }
-
-        Flashcard flashcard = flashcardOptional.get();
         FlashcardDTO newFlashcardDTO = flashcardMapper.toDTO(flashcard);
 
         if (!Objects.isNull(flashcard.getImage())) {
@@ -132,9 +129,13 @@ public class FlashcardServiceImpl implements FlashcardService {
         System.out.println(httpServletRequest instanceof MultipartHttpServletRequest);
         if (httpServletRequest instanceof MultipartHttpServletRequest) {
             Map<String, MultipartFile> multipartFileMap = ((MultipartHttpServletRequest) httpServletRequest).getFileMap();
-            log.info("multipartfile: {}", multipartFileMap);
+            log.info("multipartfile 1: {}", multipartFileMap.get("1"));
+
+            flashcardDTOList.forEach(flashcardDTO -> log.info("flashcardDTO term: {} definition: {} orderId: {}", flashcardDTO.getTerm(), flashcardDTO.getDefinition(), flashcardDTO.getOrderId()));
+
             List<FlashcardDTO> flashcardDTOsWithoutFiles = new ArrayList<>();
             List<FlashcardDTO> flashcardDTOsWithFiles = new ArrayList<>();
+
             flashcardDTOList.forEach(flashcardDTO -> {
                 String orderId = String.valueOf(flashcardDTO.getOrderId());
                 MultipartFile multipartFile = multipartFileMap.get(orderId);
@@ -155,17 +156,24 @@ public class FlashcardServiceImpl implements FlashcardService {
                         .collect(Collectors.toList());
             }
 
-            Map<FlashcardDTO, MultipartFile> flashcardDTOMultipartFileMap =
+            Map<Flashcard, MultipartFile> flashcardMultipartFileMap =
                     flashcardDTOsWithFiles.stream().collect(
-                            Collectors.toMap(Function.identity(),
+                            Collectors.toMap(flashcardDTO -> {
+                                        try {
+                                            return flashcardMapper.toEntity(flashcardDTO);
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    },
                                     flashcardDTO -> {
                                         String orderId = String.valueOf(flashcardDTO.getOrderId());
                                         return multipartFileMap.get(orderId);
                                     }
                             ));
-            log.info("flashcardDTOMultipartFileMap => {}", flashcardDTOMultipartFileMap);
 
-            resultList.addAll(createOrUpdate(deckId, flashcardDTOMultipartFileMap));
+            log.info("flashcardDTOMultipartFileMap => {}", flashcardMultipartFileMap);
+
+            resultList.addAll(createOrUpdate(deckId, flashcardMultipartFileMap));
             return resultList;
         }
 
@@ -173,41 +181,41 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     private List<FlashcardImageDTO> createOrUpdate(Long deckId,
-                                                   Map<FlashcardDTO, MultipartFile> flashcardDTOMultipartFileMap
+                                                   Map<Flashcard, MultipartFile> flashcardMultipartFileMap
     ) throws IOException {
         Deck deck = Optional.of(deckRepo.findById(deckId))
                 .orElseThrow(() -> new NoSuchDeckException(deckId))
                 .get();
-        log.info("flashcardDTOMultipartFileMap: {}", flashcardDTOMultipartFileMap);
+        log.info("flashcardDTOMultipartFileMap: {}", flashcardMultipartFileMap);
 
-        List<Image> images = flashcardDTOMultipartFileMap.entrySet().stream()
-                .map(entry -> createImageFromFlashcardDTO(entry.getValue(), entry.getKey(), deck))
+        List<Flashcard> flashcards = flashcardMultipartFileMap.keySet().stream()
+                .peek(flashcard -> {
+                    flashcard.setImage(createImageFromFlashcardDTO(flashcardMultipartFileMap.get(flashcard)));
+                    flashcard.setDeck(deck);
+                })
                 .collect(Collectors.toList());
 
-        List<Image> savedImages = imageRepository.saveAll(images);
-        return savedImages.stream()
-                .map(image -> new FlashcardImageDTO(flashcardMapper.toDTO(image.getFlashcard()), image.getData()))
+        Iterator<Flashcard> savedFlashcardsIterator = flashcardRepo.saveAll(flashcards).iterator();
+        List<Flashcard> savedFlashcardList = new ArrayList<>();
+        savedFlashcardsIterator.forEachRemaining(savedFlashcardList::add);
+
+        return savedFlashcardList.stream()
+                .map(flashcard -> new FlashcardImageDTO(flashcardMapper.toDTO(flashcard), flashcard.getImage().getData()))
                 .collect(Collectors.toList());
     }
 
 
-    private Image createImageFromFlashcardDTO(MultipartFile multipartFile, FlashcardDTO flashcardDTO, Deck deck) {
-        {
-            try {
-                Flashcard flashcard = flashcardMapper.toEntity(flashcardDTO);
-                flashcard.setDeck(deck);
-
-                Image image = Image.builder()
-                        .data(multipartFile.getBytes())
-                        .size(multipartFile.getSize())
-                        .name(multipartFile.getOriginalFilename())
-                        .flashcard(flashcard)
-                        .contentType(multipartFile.getContentType())
-                        .build();
-                return image;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+    private Image createImageFromFlashcardDTO(MultipartFile multipartFile) {
+        try {
+            Image image = Image.builder()
+                    .data(multipartFile.getBytes())
+                    .size(multipartFile.getSize())
+                    .name(multipartFile.getOriginalFilename())
+                    .contentType(multipartFile.getContentType())
+                    .build();
+            return image;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

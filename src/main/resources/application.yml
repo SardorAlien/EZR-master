@@ -3,9 +3,9 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:postgresql://localhost:5432/ezr
+    url: jdbc:postgresql://postgres-sql:5432/ezr
     username: postgres
-    password: 5938240s
+    password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false

@@ -1,4 +1,10 @@
-FROM openjdk:11
+FROM openjdk:11-jdk
+
+WORKDIR /app
+
+## just copying the application from target folder into a container
+COPY /target/ezr.jar /app/ezr.jar
+
 EXPOSE 8081
-ADD target/ezr.jar ezr.jar
-ENTRYPOINT ["java", "-jar", "/ezr.jar"]
+
+CMD ["java","-jar", "ezr.jar"]

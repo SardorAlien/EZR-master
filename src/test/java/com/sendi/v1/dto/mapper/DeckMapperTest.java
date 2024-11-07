@@ -45,23 +45,6 @@ class DeckMapperTest {
         ReflectionTestUtils.setField(deckMapper, "flashcardMapper", flashcardMapper);
     }
 
-    @Captor
-    ArgumentCaptor<Set<Flashcard>> flashcardsArgumentCaptor;
-
-    private class FlashcardMapperToDTO implements Answer<Set<FlashcardDTO>> {
-        @Override
-        public Set<FlashcardDTO> answer(InvocationOnMock invocationOnMock) throws Throwable {
-            Set<Flashcard> flashcards = invocationOnMock.getArgument(0);
-            log.info("flashcards captured {}", flashcards);
-            if (flashcards.isEmpty()) return Collections.emptySet();
-
-            return flashcards.stream().map(flashcard -> FlashcardDTO.builder()
-                    .term(flashcard.getTerm())
-                    .definition(flashcard.getDefinition())
-                    .build()).collect(Collectors.toSet());
-        }
-    }
-
     @Test
     public void deckToDeckDTO() throws Exception {
         //given
